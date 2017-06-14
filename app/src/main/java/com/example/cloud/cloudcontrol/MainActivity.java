@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
     /* TODO
         - wszystko na srodku, niezaleznie od ekranu
         - klikanie na zdjecie
+        - string resource zamias na sztywno 0 w textView
+        - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
      */
     private int num = 0;
 
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 tv.setText(String.valueOf(x) + " " + String.valueOf(y));
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        // tu zobaczyc kiedy sie wykonują
                     case MotionEvent.ACTION_MOVE:
                     case MotionEvent.ACTION_UP:
                 }
