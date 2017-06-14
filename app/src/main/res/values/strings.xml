@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">cloudControl</string>
+    <string name="Hue">HUE</string>
+    <string name="Saturation">SATURATION</string>
+    <string name="Value">VALUE</string>
+    <string name="Brightness">Brightness</string>
+    <string name="hsvStarterValues">0</string>
+    <string name="Red">RED</string>
+    <string name="Green">GREEN</string>
+    <string name="Blue">BLUE</string>
+    <string name="rgbStarterValues">0</string>
 </resources>

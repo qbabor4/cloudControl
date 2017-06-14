@@ -16,7 +16,7 @@
             android:layout_marginLeft="19dp"
             android:layout_marginStart="19dp"
             android:layout_marginTop="30dp"
-            android:text="Hue" />
+            android:text="@string/Hue" />
 
         <TextView
             android:id="@+id/textView4"
@@ -25,7 +25,7 @@
             android:layout_alignLeft="@+id/textView3"
             android:layout_alignStart="@+id/textView3"
             android:layout_below="@+id/textView3"
-            android:text="Saturation" />
+            android:text="@string/Saturation" />
 
         <TextView
             android:id="@+id/textView5"
@@ -34,7 +34,7 @@
             android:layout_alignLeft="@+id/textView4"
             android:layout_alignStart="@+id/textView4"
             android:layout_below="@+id/textView4"
-            android:text="Value" />
+            android:text="@string/Value" />
 
         <TextView
             android:id="@+id/textView6"
@@ -45,7 +45,7 @@
             android:layout_marginStart="16dp"
             android:layout_toEndOf="@+id/textView4"
             android:layout_toRightOf="@+id/textView4"
-            android:text="0" />
+            android:text="@string/hsvStarterValues" />
 
         <TextView
             android:id="@+id/textView7"
@@ -55,7 +55,7 @@
             android:layout_alignBottom="@+id/textView4"
             android:layout_alignLeft="@+id/textView6"
             android:layout_alignStart="@+id/textView6"
-            android:text="0" />
+            android:text="@string/hsvStarterValues" />
 
         <TextView
             android:id="@+id/textView8"
@@ -65,22 +65,22 @@
             android:layout_alignBottom="@+id/textView5"
             android:layout_alignLeft="@+id/textView7"
             android:layout_alignStart="@+id/textView7"
-            android:text="0" />
+            android:text="@string/hsvStarterValues" />
 
     <ImageView
             android:id="@+id/hsvCircleImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView5"
-            android:layout_marginTop="15dp"
+        android:layout_marginTop="14dp"
             app:srcCompat="@drawable/hsv_circle_fit"
-            android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/textView5"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Red"
+        android:text="@string/Red"
         android:layout_below="@+id/textView2"
         android:layout_alignLeft="@+id/textView2"
         android:layout_alignStart="@+id/textView2" />
@@ -89,19 +89,19 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Green"
-        android:layout_alignBaseline="@+id/textView6"
+        android:text="@string/Green"
         android:layout_alignBottom="@+id/textView6"
         android:layout_toRightOf="@+id/textView6"
         android:layout_toEndOf="@+id/textView6"
         android:layout_marginLeft="72dp"
-        android:layout_marginStart="72dp" />
+        android:layout_marginStart="72dp"
+        android:layout_alignTop="@+id/textView6" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Blue"
+        android:text="@string/Blue"
         android:layout_below="@+id/textView"
         android:layout_alignLeft="@+id/textView"
         android:layout_alignStart="@+id/textView" />
@@ -115,7 +115,7 @@
         android:layout_marginStart="13dp"
         android:layout_toEndOf="@+id/textView2"
         android:layout_toRightOf="@+id/textView2"
-        android:text="0" />
+        android:text="@string/rgbStarterValues" />
 
     <TextView
         android:id="@+id/textView14"
@@ -124,7 +124,7 @@
         android:layout_above="@+id/textView9"
         android:layout_alignLeft="@+id/textView13"
         android:layout_alignStart="@+id/textView13"
-        android:text="0" />
+        android:text="@string/rgbStarterValues" />
 
     <TextView
         android:id="@+id/textView15"
@@ -133,28 +133,29 @@
         android:layout_alignLeft="@+id/textView14"
         android:layout_alignStart="@+id/textView14"
         android:layout_below="@+id/textView14"
-        android:text="0" />
+        android:text="@string/rgbStarterValues" />
 
     <TextView
         android:id="@+id/textView16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/hsvCircleImage"
-        android:layout_alignStart="@+id/hsvCircleImage"
+        android:layout_marginTop="11dp"
+        android:text="@string/Brightness"
         android:layout_below="@+id/hsvCircleImage"
-        android:layout_marginTop="13dp"
-        android:text="Brightness" />
+        android:layout_centerHorizontal="true" />
 
     <SeekBar
         android:id="@+id/seekBar2"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_alignEnd="@+id/hsvCircleImage"
-        android:layout_alignLeft="@+id/textView16"
+        android:layout_alignLeft="@+id/hsvCircleImage"
         android:layout_alignRight="@+id/hsvCircleImage"
-        android:layout_alignStart="@+id/textView16"
+        android:layout_alignStart="@+id/hsvCircleImage"
         android:layout_below="@+id/textView16"
-        android:max="@integer/maxSliderValue" />
+        android:max="@integer/maxSliderValue"
+        android:progress="@integer/sliderProgress"
+        android:visibility="visible" />
 
 
 </RelativeLayout>
