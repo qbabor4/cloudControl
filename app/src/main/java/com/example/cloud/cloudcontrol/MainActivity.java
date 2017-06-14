@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         - moze slider w dół na ekranie ( mniejsze rozdzielczosci ucinaja
         - elipsa rysowana, nie z pliku
         - druga elipsa w rogu, do pokazania koloru wybranego
+        - black overlay był taki sam rozmiarowo jak hsv image
      */
     private int num = 0;
     public int hsv = 0;
