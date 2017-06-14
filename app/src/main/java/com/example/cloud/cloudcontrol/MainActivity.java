@@ -2,6 +2,7 @@ package com.example.cloud.cloudcontrol;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -67,10 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSeekBarChange(){
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
+        final ImageView hsvCircleBlackOverlay = (ImageView) findViewById(R.id.hsvCircleBlackOverlay);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final TextView valueTextView = (TextView) findViewById(R.id.textView8);
+                valueTextView.setText(String.valueOf(progress));
+                float imageAlpha = 1 - (float)progress / 100;
+                hsvCircleBlackOverlay.setAlpha(imageAlpha);
+                Log.d("value", String.valueOf(imageAlpha));
 
             }
 

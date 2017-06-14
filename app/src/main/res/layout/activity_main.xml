@@ -153,19 +153,31 @@
         android:layout_alignRight="@+id/hsvCircleImage"
         android:layout_alignStart="@+id/hsvCircleImage"
         android:layout_below="@+id/textView16"
-        android:contextClickable="false"
+
         android:max="@integer/maxSliderValue"
         android:progress="@integer/sliderProgress"
         android:visibility="visible" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/hsvCircleBlackOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/hsvCircleImage"
         android:layout_alignStart="@+id/hsvCircleImage"
         android:layout_alignTop="@+id/hsvCircleImage"
+        android:alpha="0.0"
         app:srcCompat="@drawable/hsv_circle_fit_overlay" />
 
+    <shape
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:shape="oval" >
+
+        <solid
+            android:color="#000000"/>
+
+        <size
+            android:width="30dp"
+            android:height="30dp" />
+    </shape>
 
 </RelativeLayout>
