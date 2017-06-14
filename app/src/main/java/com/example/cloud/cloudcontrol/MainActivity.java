@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +16,9 @@ public class MainActivity extends AppCompatActivity {
         - podlaczyc komorke
         - string resource zamias na sztywno 0 w textView
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
-        - moze slider na ekranie ( mniejsze rozdzielczosci ucinaja
+        - moze slider w dół na ekranie ( mniejsze rozdzielczosci ucinaja
+        - elipsa rysowana, nie z pliku
+        - druga elipsa w rogu, do pokazania koloru wybranego
      */
     private int num = 0;
     public int hsv = 0;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         hsvCircleImageOnClick();
+        onSeekBarChange();
     }
 
     private void changeTextViewText(){ // jaki id i na jaki text argumenty
@@ -57,6 +61,27 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                 }
                 return false;
+            }
+        });
+    }
+
+    private void onSeekBarChange(){
+        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                final TextView valueTextView = (TextView) findViewById(R.id.textView8);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
