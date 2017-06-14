@@ -6,73 +6,74 @@
     android:layout_height="match_parent"
     tools:context="com.example.cloud.cloudcontrol.MainActivity">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="19dp"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="30dp"
-            android:text="@string/Hue" />
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/Hue" />
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView3"
-            android:layout_alignStart="@+id/textView3"
-            android:layout_below="@+id/textView3"
-            android:text="@string/Saturation" />
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:text="@string/Saturation" />
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView4"
-            android:layout_alignStart="@+id/textView4"
-            android:layout_below="@+id/textView4"
-            android:text="@string/Value" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView4"
+        android:layout_alignStart="@+id/textView4"
+        android:layout_below="@+id/textView4"
+        android:text="@string/Value" />
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/textView4"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_toEndOf="@+id/textView4"
-            android:layout_toRightOf="@+id/textView4"
-            android:text="@string/hsvStarterValues" />
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView4"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@+id/textView4"
+        android:layout_toRightOf="@+id/textView4"
+        android:text="@string/hsvStarterValues" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView4"
-            android:layout_alignBottom="@+id/textView4"
-            android:layout_alignLeft="@+id/textView6"
-            android:layout_alignStart="@+id/textView6"
-            android:text="@string/hsvStarterValues" />
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView4"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignLeft="@+id/textView6"
+        android:layout_alignStart="@+id/textView6"
+        android:text="@string/hsvStarterValues" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView5"
-            android:layout_alignBottom="@+id/textView5"
-            android:layout_alignLeft="@+id/textView7"
-            android:layout_alignStart="@+id/textView7"
-            android:text="@string/hsvStarterValues" />
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView5"
+        android:layout_alignBottom="@+id/textView5"
+        android:layout_alignLeft="@+id/textView7"
+        android:layout_alignStart="@+id/textView7"
+        android:text="@string/hsvStarterValues" />
 
     <ImageView
-            android:id="@+id/hsvCircleImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        android:id="@+id/hsvCircleImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/hsvCircleDescription"
         android:layout_marginTop="14dp"
-            app:srcCompat="@drawable/hsv_circle_fit"
+        app:srcCompat="@drawable/hsv_circle_fit"
         android:layout_below="@+id/textView5"
         android:layout_centerHorizontal="true" />
 
@@ -168,16 +169,6 @@
         android:alpha="0.0"
         app:srcCompat="@drawable/hsv_circle_fit_overlay" />
 
-    <shape
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:shape="oval" >
 
-        <solid
-            android:color="#000000"/>
-
-        <size
-            android:width="30dp"
-            android:height="30dp" />
-    </shape>
 
 </RelativeLayout>

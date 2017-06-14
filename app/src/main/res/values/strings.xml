@@ -9,4 +9,5 @@
     <string name="Green">GREEN</string>
     <string name="Blue">BLUE</string>
     <string name="rgbStarterValues">0</string>
+    <string name="hsvCircleDescription">Color circle</string>
 </resources>
