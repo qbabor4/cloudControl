@@ -10,4 +10,6 @@
     <string name="Blue">BLUE</string>
     <string name="rgbStarterValues">0</string>
     <string name="hsvCircleDescription">Color circle</string>
+    <string name="hsvCircleBlackOverlayDescription">Color circle</string>
+
 </resources>

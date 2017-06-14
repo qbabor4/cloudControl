@@ -163,12 +163,22 @@
         android:id="@+id/hsvCircleBlackOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/hsvCircleBlackOverlayDescription"
         android:layout_alignLeft="@+id/hsvCircleImage"
         android:layout_alignStart="@+id/hsvCircleImage"
         android:layout_alignTop="@+id/hsvCircleImage"
         android:alpha="0.0"
         app:srcCompat="@drawable/hsv_circle_fit_overlay" />
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:src="@drawable/preview_ellipse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/hsvCircleImage"
+        android:layout_alignTop="@+id/hsvCircleImage"
+        app:srcCompat="@drawable/hsv_circle_fit_overlay" />
 
 
 </RelativeLayout>
