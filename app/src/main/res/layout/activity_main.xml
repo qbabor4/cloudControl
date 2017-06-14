@@ -67,19 +67,7 @@
             android:layout_alignStart="@+id/textView7"
             android:text="0" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/textView6"
-            android:layout_marginEnd="44dp"
-            android:layout_marginRight="44dp"
-            android:onClick="buttonClick"
-            android:text="Button" />
-
-        <ImageView
+    <ImageView
             android:id="@+id/hsvCircleImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,6 +76,85 @@
             app:srcCompat="@drawable/hsv_circle_fit"
             android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Red"
+        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Green"
+        android:layout_alignBaseline="@+id/textView6"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_toRightOf="@+id/textView6"
+        android:layout_toEndOf="@+id/textView6"
+        android:layout_marginLeft="72dp"
+        android:layout_marginStart="72dp" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blue"
+        android:layout_below="@+id/textView"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_toRightOf="@+id/textView2"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView9"
+        android:layout_alignLeft="@+id/textView13"
+        android:layout_alignStart="@+id/textView13"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView14"
+        android:layout_alignStart="@+id/textView14"
+        android:layout_below="@+id/textView14"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/hsvCircleImage"
+        android:layout_below="@+id/hsvCircleImage"
+        android:layout_marginTop="13dp"
+        android:text="Brightness" />
+
+    <SeekBar
+        android:id="@+id/seekBar2"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignEnd="@+id/hsvCircleImage"
+        android:layout_alignLeft="@+id/textView16"
+        android:layout_alignRight="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/textView16"
+        android:layout_below="@+id/textView16"
+        android:max="@integer/maxSliderValue" />
 
 
 </RelativeLayout>

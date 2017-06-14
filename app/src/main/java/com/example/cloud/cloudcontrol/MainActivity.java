@@ -11,17 +11,26 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     /* TODO
         - wszystko na srodku, niezaleznie od ekranu
-        - klikanie na zdjecie
+        - latanie palcem po zdjeciu
+        - podlaczyc komorke
         - string resource zamias na sztywno 0 w textView
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
+        - moze slider na ekranie ( mniejsze rozdzielczosci ucinaja
      */
     private int num = 0;
+    public int hsv = 0;
+    public int saturation = 0;
+    public int value = 0;
+
+    public byte red = 0;
+    public byte green = 0;
+    public byte blue = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        buttonClick();
+
         hsvCircleImageOnClick();
     }
 
@@ -29,17 +38,6 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = (TextView)findViewById(R.id.textView6);
         num++;
         tv.setText(String.valueOf(num));
-    }
-
-    private void buttonClick(){
-        Button button = (Button)findViewById(R.id.button);
-        button.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-                        changeTextViewText();
-                    }
-                }
-        );
     }
 
     private void hsvCircleImageOnClick(){
