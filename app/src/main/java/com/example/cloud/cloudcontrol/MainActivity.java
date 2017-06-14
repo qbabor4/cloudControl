@@ -12,15 +12,11 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
-        - wszystko na srodku, niezaleznie od ekranu
         - latanie palcem po zdjeciu
-        - podlaczyc komorke
-        - string resource zamias na sztywno 0 w textView
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
         - moze slider w dół na ekranie ( mniejsze rozdzielczosci ucinaja
-        - elipsa rysowana, nie z pliku
-        - druga elipsa w rogu, do pokazania koloru wybranego
-        - black overlay był taki sam rozmiarowo jak hsv image
+        - zamiana hsv na rgb
+        - zmiana x i y na hsv
      */
     private int num = 0;
     public int hsv = 0;
@@ -51,18 +47,24 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleImg.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
+                /*int x = (int) event.getX();
+                int y = (int) event.getY(); */
                 TextView tv = (TextView)findViewById(R.id.textView6);
+                TextView tv2 = (TextView)findViewById(R.id.textView7);
+                /*tv.setText(String.valueOf(x));
+                tv2.setText(String.valueOf(y));*/
 
-                tv.setText(String.valueOf(x) + " " + String.valueOf(y));
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // tu zobaczyc kiedy sie wykonują
-                    case MotionEvent.ACTION_MOVE:
-                    case MotionEvent.ACTION_UP:
+                if(event.getAction() == MotionEvent.ACTION_MOVE)
+                {
+                    float x1 = event.getRawX();
+                    float y1 = event.getRawY();
+                    tv.setText(String.valueOf(x1));
+                    tv2.setText(String.valueOf(y1));
+                    //  Code to display x and y go here
                 }
-                return false;
+                // zrobic swichem i jak wyjezdza to nie odczytywac
+
+                return true;
             }
         });
     }

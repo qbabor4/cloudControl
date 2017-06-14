@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">cloudControl</string>
+    <string name="app_name">Chmura RGB</string>
     <string name="Hue">HUE</string>
     <string name="Saturation">SATURATION</string>
     <string name="Value">VALUE</string>
