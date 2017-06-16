@@ -16,18 +16,19 @@ public class MainActivity extends AppCompatActivity {
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - zamiana hsv na rgb
         - zmiana x i y na hsv
+        - zobaczyc czy mozna wywalic casy up i down ze swicha
+        = zobaczyc czy da sie wywalic globalne hue i saturation
      */
-    private int num = 0;
-    public int hsv = 0;
-    public int saturation = 0;
-    public int value = 0;
+
+    public int hue = 0;
+    public double saturation = 0; // 0-1
+    public double value = 0; // 0-1
 
     public byte red = 0;
     public byte green = 0;
     public byte blue = 0;
 
-    public int hsvCircleWidth = 0; // chyba zawsze to samo co height
-    public int hsvCircleHeight = 0;
+    private double hsvCircleRadius;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,37 +37,52 @@ public class MainActivity extends AppCompatActivity {
 
         hsvCircleImageOnClick();
         onSeekBarChange();
-        setHsvCircleSize();
-
+        setHsvCircleRadius();
     }
 
-    private void setHsvCircleSize(){
+    private void setHsvCircleRadius(){
         final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
         ViewTreeObserver vto = hsvCircleImgView.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 hsvCircleImgView.getViewTreeObserver().removeOnPreDrawListener(this);
-                hsvCircleWidth = hsvCircleImgView.getMeasuredWidth();
-                hsvCircleHeight = hsvCircleImgView.getMeasuredHeight();
+                hsvCircleRadius = hsvCircleImgView.getMeasuredWidth() / 2;
 
                 return true;
             }
         });
     }
 
+    private double getDistanceFromCenter(int x, int y){
+        double middleXY = hsvCircleRadius;
+        double triangleBase = Math.abs(middleXY - x);
+        double triangleHeight = Math.abs(middleXY - y);
+
+        return Math.sqrt(triangleBase * triangleBase + triangleHeight * triangleHeight); //triangle diagonal (pitagoras)
+    }
+
+    private double getSaturation(double distanceFromCenter){
+        return distanceFromCenter / hsvCircleRadius;
+    }
+
+    private int getHue(int x, int y){
+        double angle = Math.abs (Math.atan2( (y - hsvCircleRadius), ( hsvCircleRadius - x) ) * 180 / 3.14 - 180);
+        angle = (angle + 90) % 360;
+
+        return (int)angle;
+    }
+
+
     private void hsvCircleImageOnClick(){
         final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
-        TextView tv13 = (TextView)findViewById(R.id.textView13);
-        TextView tv14 = (TextView)findViewById(R.id.textView14);
-        tv13.setText(String.valueOf(hsvCircleHeight));
-        tv14.setText(String.valueOf(hsvCircleWidth));
         hsvCircleImg.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
-
+                int hsvCircleHeight = (int)hsvCircleRadius * 2;
+                int hsvCircleWidth = hsvCircleHeight;
                 TextView tv = (TextView)findViewById(R.id.textView6);
                 TextView tv2 = (TextView)findViewById(R.id.textView7);
                 if ( x > 0 && y > 0 && x < hsvCircleWidth && y < hsvCircleHeight) {
@@ -80,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                         case MotionEvent.ACTION_MOVE: {
                             tv.setText(String.valueOf(x));
                             tv2.setText(String.valueOf(y));
+                            changeHsvVariables(x, y);
                             break;
                         }
                     }
@@ -88,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void changeHsvVariables(int x, int y){
+        double distanceFromCenter = getDistanceFromCenter(x, y);
+        double saturation = getSaturation( distanceFromCenter );
+        if (saturation <= 1) {
+            this.saturation = saturation;
+            this.hue = getHue(x, y);
+        }
     }
 
     private void onSeekBarChange(){
@@ -100,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 valueTextView.setText(String.valueOf(progress));
                 float imageAlpha = 1 - (float)progress / 100;
                 hsvCircleBlackOverlay.setAlpha(imageAlpha);
+                value = progress /100.;
                 Log.d("value", String.valueOf(imageAlpha));
 
             }
