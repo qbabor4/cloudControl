@@ -5,20 +5,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
-        - latanie palcem po zdjeciu
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
-        - moze slider w dół na ekranie ( mniejsze rozdzielczosci ucinaja
+        - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - zamiana hsv na rgb
         - zmiana x i y na hsv
-        - jak x albo y jest na minusie ( albo jest wieksze od szerokosci  albo wysokosci ( raczej to samo )), to wyjezdza sie palecem za hsvCircle
-        - nie ustawia dobrze imagewidth i height
      */
     private int num = 0;
     public int hsv = 0;
@@ -29,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
     public byte green = 0;
     public byte blue = 0;
 
-    public int hsvCircleWidth;
-    public int hsvCircleHeight;
+    public int hsvCircleWidth = 0; // chyba zawsze to samo co height
+    public int hsvCircleHeight = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,23 +36,27 @@ public class MainActivity extends AppCompatActivity {
 
         hsvCircleImageOnClick();
         onSeekBarChange();
-        setHsvCircleWidth();
-        setHsvCircleHeight();
+        setHsvCircleSize();
+
     }
 
-    private void setHsvCircleWidth(){
-        ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
-        this.hsvCircleWidth = hsvCircleImg.getWidth();
-    }
+    private void setHsvCircleSize(){
+        final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
+        ViewTreeObserver vto = hsvCircleImgView.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                hsvCircleImgView.getViewTreeObserver().removeOnPreDrawListener(this);
+                hsvCircleWidth = hsvCircleImgView.getMeasuredWidth();
+                hsvCircleHeight = hsvCircleImgView.getMeasuredHeight();
 
-    private void setHsvCircleHeight(){
-        ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
-        hsvCircleHeight = hsvCircleImg.getHeight();
+                return true;
+            }
+        });
     }
 
     private void hsvCircleImageOnClick(){
         final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
-        this.hsvCircleHeight = hsvCircleImg.getHeight();
         TextView tv13 = (TextView)findViewById(R.id.textView13);
         TextView tv14 = (TextView)findViewById(R.id.textView14);
         tv13.setText(String.valueOf(hsvCircleHeight));
@@ -68,10 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView tv = (TextView)findViewById(R.id.textView6);
                 TextView tv2 = (TextView)findViewById(R.id.textView7);
-                //  && x < hsvCircleWidth && y < hsvCircleHeight
-                if ( x > 0 && y > 0 ) {
-                    Log.d("hsvCirclWidth", String.valueOf(hsvCircleWidth));
-                    Log.d("hsvCircleHeight", String.valueOf(hsvCircleHeight));
+                if ( x > 0 && y > 0 && x < hsvCircleWidth && y < hsvCircleHeight) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN: {
                             break;
