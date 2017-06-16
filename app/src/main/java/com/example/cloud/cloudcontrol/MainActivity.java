@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
         - moze slider w dół na ekranie ( mniejsze rozdzielczosci ucinaja
         - zamiana hsv na rgb
         - zmiana x i y na hsv
+        - jak x albo y jest na minusie ( albo jest wieksze od szerokosci  albo wysokosci ( raczej to samo )), to wyjezdza sie palecem za hsvCircle
+        - nie ustawia dobrze imagewidth i height
      */
     private int num = 0;
     public int hsv = 0;
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     public byte green = 0;
     public byte blue = 0;
 
+    public int hsvCircleWidth;
+    public int hsvCircleHeight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,35 +39,53 @@ public class MainActivity extends AppCompatActivity {
 
         hsvCircleImageOnClick();
         onSeekBarChange();
+        setHsvCircleWidth();
+        setHsvCircleHeight();
     }
 
-    private void changeTextViewText(){ // jaki id i na jaki text argumenty
-        TextView tv = (TextView)findViewById(R.id.textView6);
-        num++;
-        tv.setText(String.valueOf(num));
+    private void setHsvCircleWidth(){
+        ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
+        this.hsvCircleWidth = hsvCircleImg.getWidth();
+    }
+
+    private void setHsvCircleHeight(){
+        ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
+        hsvCircleHeight = hsvCircleImg.getHeight();
     }
 
     private void hsvCircleImageOnClick(){
-        ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
+        final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
+        this.hsvCircleHeight = hsvCircleImg.getHeight();
+        TextView tv13 = (TextView)findViewById(R.id.textView13);
+        TextView tv14 = (TextView)findViewById(R.id.textView14);
+        tv13.setText(String.valueOf(hsvCircleHeight));
+        tv14.setText(String.valueOf(hsvCircleWidth));
         hsvCircleImg.setOnTouchListener(new View.OnTouchListener(){
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                /*int x = (int) event.getX();
-                int y = (int) event.getY(); */
+            public boolean onTouch(View view, MotionEvent event) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+
                 TextView tv = (TextView)findViewById(R.id.textView6);
                 TextView tv2 = (TextView)findViewById(R.id.textView7);
-                /*tv.setText(String.valueOf(x));
-                tv2.setText(String.valueOf(y));*/
-
-                if(event.getAction() == MotionEvent.ACTION_MOVE)
-                {
-                    float x1 = event.getRawX();
-                    float y1 = event.getRawY();
-                    tv.setText(String.valueOf(x1));
-                    tv2.setText(String.valueOf(y1));
-                    //  Code to display x and y go here
+                //  && x < hsvCircleWidth && y < hsvCircleHeight
+                if ( x > 0 && y > 0 ) {
+                    Log.d("hsvCirclWidth", String.valueOf(hsvCircleWidth));
+                    Log.d("hsvCircleHeight", String.valueOf(hsvCircleHeight));
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            break;
+                        }
+                        case MotionEvent.ACTION_UP: {
+                            break;
+                        }
+                        case MotionEvent.ACTION_MOVE: {
+                            tv.setText(String.valueOf(x));
+                            tv2.setText(String.valueOf(y));
+                            break;
+                        }
+                    }
                 }
-                // zrobic swichem i jak wyjezdza to nie odczytywac
 
                 return true;
             }
