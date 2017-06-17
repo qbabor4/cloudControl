@@ -4,11 +4,12 @@
     <string name="Saturation">SATURATION</string>
     <string name="Value">VALUE</string>
     <string name="Brightness">Brightness</string>
-    <string name="hsvStarterValues">0</string>
+    <string name="hsStarterValues">0</string>
+    <string name="vStarterValue">100</string>
     <string name="Red">RED</string>
     <string name="Green">GREEN</string>
     <string name="Blue">BLUE</string>
-    <string name="rgbStarterValues">0</string>
+    <string name="rgbStarterValues">255</string>
     <string name="hsvCircleDescription">Color circle</string>
     <string name="hsvCircleBlackOverlayDescription">Color circle</string>
 

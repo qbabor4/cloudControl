@@ -14,18 +14,16 @@ public class MainActivity extends AppCompatActivity {
     /* TODO
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
-        - zobaczyc czy mozna wywalic casy up i down ze swicha
         - zmiana koloru na prewiew ellipse
-        - liczenie w oddzielnej klasie a tu tylko zmiana widgetow
      */
 
     public int hue = 0; // 0-360
     public double saturation = 0; // 0-1
     public double value = 1; // 0-1
 
-    public int red = 0; // 0-255
-    public int green = 0; // 0-255
-    public int blue = 0; // 0-255
+    public int red = 255; // 0-255
+    public int green = 255; // 0-255
+    public int blue = 255; // 0-255
 
     private double hsvCircleRadius;
 
@@ -52,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     private void hsvCircleImageOnClick(){
         final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
@@ -108,16 +103,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void changeHsvCircleBlackOverlaysAlpha(int progress){
+        final ImageView hsvCircleBlackOverlay = (ImageView) findViewById(R.id.hsvCircleBlackOverlay);
+        float imageAlpha = 1 - (float)progress / 100;
+        hsvCircleBlackOverlay.setAlpha(imageAlpha);
+    }
+
     private void onSeekBarChange(){
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
-        final ImageView hsvCircleBlackOverlay = (ImageView) findViewById(R.id.hsvCircleBlackOverlay);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 final TextView valueTextView = (TextView) findViewById(R.id.textView8);
                 valueTextView.setText(String.valueOf(progress));
-                float imageAlpha = 1 - (float)progress / 100;
-                hsvCircleBlackOverlay.setAlpha(imageAlpha); // osobna funkcja
+                changeHsvCircleBlackOverlaysAlpha(progress);
                 value = progress /100.;
                 setRgbVariables();
                 TextView tv13 = (TextView)findViewById(R.id.textView13);
