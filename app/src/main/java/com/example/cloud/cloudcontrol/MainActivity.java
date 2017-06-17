@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     /* TODO
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
+        - Bluetooth low Energy
      */
 
     public int hue = 0; // 0-360

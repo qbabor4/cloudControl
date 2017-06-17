@@ -96,8 +96,7 @@ class HsvRgbCalculations {
                     break;
             }
         }
-        int rgbArray[] = {(int)(red * 255.0), (int)(green * 255.0), (int)(blue * 255.0)};
 
-        return rgbArray;
+        return new int[] {(int)(red * 255.0), (int)(green * 255.0), (int)(blue * 255.0)};
     }
 }
