@@ -5,9 +5,9 @@ package com.example.cloud.cloudcontrol;
  *
  */
 
-public class HsvRgbCalculations {
+class HsvRgbCalculations {
 
-    public static double getDistanceFromCenter(int x, int y, double hsvCircleRadius){
+    static double getDistanceFromCenter(int x, int y, double hsvCircleRadius){
         double middleXY = hsvCircleRadius;
         double triangleBase = Math.abs(middleXY - x);
         double triangleHeight = Math.abs(middleXY - y);
@@ -15,11 +15,11 @@ public class HsvRgbCalculations {
         return Math.sqrt(triangleBase * triangleBase + triangleHeight * triangleHeight); //triangle diagonal (pitagoras)
     }
 
-    public static double getSaturation(double distanceFromCenter, double hsvCircleRadius){
+    static double getSaturation(double distanceFromCenter, double hsvCircleRadius){
         return distanceFromCenter / hsvCircleRadius;
     }
 
-    public static int getHue(int x, int y, double hsvCircleRadius){
+    static int getHue(int x, int y, double hsvCircleRadius){
         double angle = Math.abs (Math.atan2( (y - hsvCircleRadius), ( hsvCircleRadius - x) ) * 180 / 3.14 - 180);
         angle = (angle + 90) % 360;
 
@@ -30,7 +30,7 @@ public class HsvRgbCalculations {
     /// h is from 0-360
     /// s,v values are 0-1
     /// r,g,b values are 0-255
-    public static int[] hsvToRgb(int H, double S, double V) {
+    static int[] hsvToRgb(int H, double S, double V) {
         double red, green, blue;
 
         if (V == 0) {

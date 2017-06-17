@@ -1,16 +1,8 @@
 <resources>
     <string name="app_name">Chmura RGB</string>
-    <string name="Hue">HUE</string>
-    <string name="Saturation">SATURATION</string>
-    <string name="Value">VALUE</string>
     <string name="Brightness">Brightness</string>
-    <string name="hsStarterValues">0</string>
-    <string name="vStarterValue">100</string>
-    <string name="Red">RED</string>
-    <string name="Green">GREEN</string>
-    <string name="Blue">BLUE</string>
-    <string name="rgbStarterValues">255</string>
     <string name="hsvCircleDescription">Color circle</string>
-    <string name="hsvCircleBlackOverlayDescription">Color circle</string>
+    <string name="hsvCircleBlackOverlayDescription">Black overlay ellipse on hsv circle</string>
+    <string name="previewEllipseDescription">Picked color from hsv circle</string>
 
 </resources>
