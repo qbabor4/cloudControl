@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
         hsvCircleImageOnClick();
         onSeekBarChange();
-        setHsvCircleRadius();
+        setFinalHsvCircleRadius();
     }
 
-    private void setHsvCircleRadius(){
+    private void setFinalHsvCircleRadius(){
         final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
         ViewTreeObserver vto = hsvCircleImgView.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -101,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
             this.green = rgbColors[1];
             this.blue = rgbColors[2];
         }
+    }
+
+    private void changePreviewEllipseColor(){
+
     }
 
     private void changeHsvCircleBlackOverlaysAlpha(int progress){
