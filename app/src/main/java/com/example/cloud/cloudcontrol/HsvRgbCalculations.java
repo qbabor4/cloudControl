@@ -8,9 +8,8 @@ package com.example.cloud.cloudcontrol;
 class HsvRgbCalculations {
 
     static double getDistanceFromCenter(int x, int y, double hsvCircleRadius){
-        double middleXY = hsvCircleRadius;
-        double triangleBase = Math.abs(middleXY - x);
-        double triangleHeight = Math.abs(middleXY - y);
+        double triangleBase = Math.abs(hsvCircleRadius - x); // hsvCircleRadius gives center x and y
+        double triangleHeight = Math.abs(hsvCircleRadius - y);
 
         return Math.sqrt(triangleBase * triangleBase + triangleHeight * triangleHeight); //triangle diagonal (pitagoras)
     }
