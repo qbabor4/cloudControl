@@ -1,5 +1,6 @@
 package com.example.cloud.cloudcontrol;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,15 +19,16 @@ public class MainActivity extends AppCompatActivity {
         - zmiana x i y na hsv
         - zobaczyc czy mozna wywalic casy up i down ze swicha
         = zobaczyc czy da sie wywalic globalne hue i saturation
+        - liczenie w oddzielnej klasie a tu tylko widgety
      */
 
-    public int hue = 0;
+    public int hue = 0; // 0-360
     public double saturation = 0; // 0-1
-    public double value = 0; // 0-1
+    public double value = 1; // 0-1
 
-    public byte red = 0;
-    public byte green = 0;
-    public byte blue = 0;
+    public int red = 0;
+    public int green = 0;
+    public int blue = 0;
 
     private double hsvCircleRadius;
 
@@ -74,6 +76,81 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /// Convert HSV to RGB
+    /// h is from 0-360
+    /// s,v values are 0-1
+    /// r,g,b values are 0-255
+    public int[] hsvToRgb(int H, double S, double V) {
+        double red, green, blue;
+
+        if (V == 0) {
+            red = green = blue = 0;
+        }
+        else {
+            double hf = H / 60.0;
+            int i = (int) Math.floor( hf );
+            double f = hf - i;
+            double pv = V * (1 - S);
+            double qv = V * (1 - S * f);
+            double tv = V * (1 - S * (1 - f));
+
+            switch (i) {
+                // Red is the dominant color
+                case 0:
+                    red = V;
+                    green = tv;
+                    blue = pv;
+                    break;
+                // Green is the dominant color
+                case 1:
+                    red = qv;
+                    green = V;
+                    blue = pv;
+                    break;
+                case 2:
+                    red = pv;
+                    green = V;
+                    blue = tv;
+                    break;
+                // Blue is the dominant color
+                case 3:
+                    red = pv;
+                    green = qv;
+                    blue = V;
+                    break;
+                case 4:
+                    red = tv;
+                    green = pv;
+                    blue = V;
+                    break;
+                // Red is the dominant color
+                case 5:
+                    red = V;
+                    green = pv;
+                    blue = qv;
+                    break;
+                // Just in case we overshoot on our math by a little, we put these here. Since its a switch it won't slow us down at all to put these here.
+                case 6:
+                    red = V;
+                    green = tv;
+                    blue = pv;
+                    break;
+                case -1:
+                    red = V;
+                    green = pv;
+                    blue = qv;
+                    break;
+                // The color is not defined, we should throw an error.
+                default:
+                    //LFATAL("i Value error in Pixel conversion, Value is %d", i);
+                    red = green = blue = V; // Just pretend its black/white
+                    break;
+            }
+        }
+        int rgbArray[] = {(int)(red * 255.0), (int)(green * 255.0), (int)(blue * 255.0)};
+        return rgbArray;
+    }
+
     private void hsvCircleImageOnClick(){
         final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
         hsvCircleImg.setOnTouchListener(new View.OnTouchListener(){
@@ -83,8 +160,11 @@ public class MainActivity extends AppCompatActivity {
                 int y = (int) event.getY();
                 int hsvCircleHeight = (int)hsvCircleRadius * 2;
                 int hsvCircleWidth = hsvCircleHeight;
-                TextView tv = (TextView)findViewById(R.id.textView6);
-                TextView tv2 = (TextView)findViewById(R.id.textView7);
+                TextView tv6 = (TextView)findViewById(R.id.textView6);
+                TextView tv7 = (TextView)findViewById(R.id.textView7);
+                TextView tv13 = (TextView)findViewById(R.id.textView13);
+                TextView tv14 = (TextView)findViewById(R.id.textView14);
+                TextView tv15 = (TextView)findViewById(R.id.textView15);
                 if ( x > 0 && y > 0 && x < hsvCircleWidth && y < hsvCircleHeight) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN: {
@@ -94,9 +174,14 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         }
                         case MotionEvent.ACTION_MOVE: {
-                            tv.setText(String.valueOf(x));
-                            tv2.setText(String.valueOf(y));
-                            changeHsvVariables(x, y);
+
+                            setRgbVariables(x, y);
+                            tv6.setText(String.valueOf(hue));
+                            tv7.setText(String.valueOf(saturation));
+                            tv13.setText(String.valueOf(red));
+                            tv14.setText(String.valueOf(green));
+                            tv15.setText(String.valueOf(blue));
+                            Log.d("rgb", "r: " + red + " g: " + green + " b: " + blue);
                             break;
                         }
                     }
@@ -107,12 +192,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void changeHsvVariables(int x, int y){
+    private void setRgbVariables(int x, int y){
         double distanceFromCenter = getDistanceFromCenter(x, y);
         double saturation = getSaturation( distanceFromCenter );
         if (saturation <= 1) {
             this.saturation = saturation;
             this.hue = getHue(x, y);
+            int rgbColors[] = hsvToRgb( this.hue, this.saturation, this.value);
+            this.red = rgbColors[0];
+            this.green = rgbColors[1];
+            this.blue = rgbColors[2];
         }
     }
 

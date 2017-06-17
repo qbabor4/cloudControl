@@ -51,11 +51,10 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView4"
-        android:layout_alignBottom="@+id/textView4"
+        android:text="@string/hsvStarterValues"
+        android:layout_below="@+id/textView6"
         android:layout_alignLeft="@+id/textView6"
-        android:layout_alignStart="@+id/textView6"
-        android:text="@string/hsvStarterValues" />
+        android:layout_alignStart="@+id/textView6" />
 
     <TextView
         android:id="@+id/textView8"
