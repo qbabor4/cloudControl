@@ -13,13 +13,11 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
-        - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze
+        - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
-        - zamiana hsv na rgb
-        - zmiana x i y na hsv
         - zobaczyc czy mozna wywalic casy up i down ze swicha
-        = zobaczyc czy da sie wywalic globalne hue i saturation
-        - liczenie w oddzielnej klasie a tu tylko widgety
+        - zmiana koloru na prewiew ellipse
+        - liczenie w oddzielnej klasie a tu tylko zmiana widgetow
      */
 
     public int hue = 0; // 0-360
@@ -205,6 +203,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setRgbVariables(){
+        if (saturation <= 1) {
+            int rgbColors[] = hsvToRgb( hue, saturation, value);
+            this.red = rgbColors[0];
+            this.green = rgbColors[1];
+            this.blue = rgbColors[2];
+        }
+    }
+
     private void onSeekBarChange(){
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
         final ImageView hsvCircleBlackOverlay = (ImageView) findViewById(R.id.hsvCircleBlackOverlay);
@@ -214,9 +221,15 @@ public class MainActivity extends AppCompatActivity {
                 final TextView valueTextView = (TextView) findViewById(R.id.textView8);
                 valueTextView.setText(String.valueOf(progress));
                 float imageAlpha = 1 - (float)progress / 100;
-                hsvCircleBlackOverlay.setAlpha(imageAlpha);
+                hsvCircleBlackOverlay.setAlpha(imageAlpha); // osobna funkcja
                 value = progress /100.;
-                Log.d("value", String.valueOf(imageAlpha));
+                setRgbVariables();
+                TextView tv13 = (TextView)findViewById(R.id.textView13);
+                TextView tv14 = (TextView)findViewById(R.id.textView14);
+                TextView tv15 = (TextView)findViewById(R.id.textView15);
+                tv13.setText(String.valueOf(red));
+                tv14.setText(String.valueOf(green));
+                tv15.setText(String.valueOf(blue));
 
             }
 
