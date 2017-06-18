@@ -1,5 +1,9 @@
 package com.example.cloud.cloudcontrol;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,12 +14,16 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - Bluetooth low Energy
+        - onActivityResult zobaczyc co wybrał przy aktywacji bluetootha
      */
 
     public int hue = 0; // 0-360
@@ -36,7 +44,49 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleImageOnClick();
         onSeekBarChange();
         setFinalHsvCircleRadius();
+        Context context = getApplicationContext();
+        if ( getBluetoothAdapter(context) ){
+            // jest bluetooth dostepny
+        }
     }
+
+    boolean getBluetoothAdapter(Context context){
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        boolean retValue = true;
+        final int REQUEST_ENABLE_BT = 1;
+
+        if (mBluetoothAdapter == null ){
+            // jak bluetootha nie da sie właczyc ( nie ma )
+            CharSequence text = "No bluetooth available";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            retValue = false;
+
+        } else {
+
+            if (!mBluetoothAdapter.isEnabled()) {
+                // jak bluetooth nie jest enablied ( nieaktywna ikona )
+                Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
+                //onActivityResult(,,enableBluetoothIntent);
+            }
+
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+            if (pairedDevices.size() > 0){
+                // There are paired devices. Get the name and address of each paired device.
+                for (BluetoothDevice device : pairedDevices) {
+                    String deviceName = device.getName();
+                    String deviceHardwareAddress = device.getAddress(); // MAC address
+                }
+
+            }
+        }
+        return retValue;
+    }
+
+
 
     private void setFinalHsvCircleRadius(){
         final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
