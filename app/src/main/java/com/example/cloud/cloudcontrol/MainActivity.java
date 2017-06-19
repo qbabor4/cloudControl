@@ -2,6 +2,7 @@ package com.example.cloud.cloudcontrol;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,12 +12,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Set;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
@@ -24,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - Bluetooth low Energy
         - onActivityResult zobaczyc co wybrał przy aktywacji bluetootha
+        - bluetooth discovery
+        - dac do paczki obie klasy
+        - lista divajsów w innym activity i jak wybierze, to wraca do normalnego activity ( finish() i wraca do koła hsv )
      */
 
     public int hue = 0; // 0-360
@@ -36,32 +44,41 @@ public class MainActivity extends AppCompatActivity {
 
     private double hsvCircleRadius;
 
+    BluetoothDevice mmDevice = null;
+    OutputStream mmOutputStream = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        hsvCircleImageOnClick();
-        onSeekBarChange();
         setFinalHsvCircleRadius();
         Context context = getApplicationContext();
-        if ( getBluetoothAdapter(context) ){
-            // jest bluetooth dostepny
+
+        try {
+            bluetoothConnection(context);
+        } catch (IOException e) {
+            Toast.makeText(context, "Nie działa bluetooth", Toast.LENGTH_LONG).show();
         }
+
+        hsvCircleImageOnClick();
+        onSeekBarChange();
     }
 
-    boolean getBluetoothAdapter(Context context){
+
+
+    void bluetoothConnection(Context context) throws IOException {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        boolean retValue = true;
+
         final int REQUEST_ENABLE_BT = 1;
 
         if (mBluetoothAdapter == null ){
             // jak bluetootha nie da sie właczyc ( nie ma )
-            CharSequence text = "No bluetooth available";
+            CharSequence text = "Bluetooth not available";
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            retValue = false;
+            finish();
 
         } else {
 
@@ -78,12 +95,32 @@ public class MainActivity extends AppCompatActivity {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
                     String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress(); // MAC address
+                    //String deviceHardwareAddress = device.getAddress(); // MAC address
+                    Toast.makeText(context, deviceName, Toast.LENGTH_LONG).show();
+                    if(device.getName().equals("HC-06"))
+                    {
+                        mmDevice = device;
+                        Toast.makeText(context, "Device found!!!", Toast.LENGTH_LONG).show();
+                        break;
+                    }
                 }
 
             }
+            else {
+                Toast.makeText(context, "No paired devices found", Toast.LENGTH_LONG).show();
+            }
+
+            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+            BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            mmSocket.connect();
+            mmOutputStream = mmSocket.getOutputStream();
+
         }
-        return retValue;
+
+    }
+
+    private void sendData(String msg) throws IOException {
+        mmOutputStream.write("1".getBytes());
     }
 
 
@@ -115,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
                     if (event.getAction() == MotionEvent.ACTION_MOVE) {
                         setRgbVariables(x, y);
                         changePreviewEllipseColor();
+                        try {
+                            sendData("lol");
+                        } catch (IOException e){
+                            Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
 
