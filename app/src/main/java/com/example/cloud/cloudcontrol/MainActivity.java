@@ -1,5 +1,6 @@
 package com.example.cloud.cloudcontrol;
 
+import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -8,11 +9,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ExpandedMenuView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -20,10 +23,11 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
-
-public class MainActivity extends AppCompatActivity {
+//extends AppCompatActivity
+public class MainActivity extends  ListActivity {
     /* TODO
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
@@ -32,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
         - bluetooth discovery
         - dac do paczki obie klasy
         - lista divajsów w innym activity i jak wybierze, to wraca do normalnego activity ( finish() i wraca do koła hsv )
+        - pokazac liste ze sparowanymi urzadzeniami. Przycik szukaj urządzeń i parowanie
+        - przełączyc z jednego layouta do drugiego
+        - najpierw sam szuka zparowanych urządzeń
+        - potem na guziku szuka nowych urzadzeń
+        - dopisac listenery do xml
+        - disabled na buttonie search jak szuka
      */
 
     public int hue = 0; // 0-360
@@ -44,80 +54,150 @@ public class MainActivity extends AppCompatActivity {
 
     private double hsvCircleRadius;
 
+    BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
     OutputStream mmOutputStream = null;
+
+    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    ArrayList<String> listItems = new ArrayList<String>();
+
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.bluetooth_connection);
+        //setContentView(R.layout.activity_main);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
+        setListAdapter(adapter);
+        setOnItemClickListenerOnListView();
+        //setFinalHsvCircleRadius();
 
-        setFinalHsvCircleRadius();
-        Context context = getApplicationContext();
+        mBluetoothAdapter = getBluetoothAdapter();
 
         try {
-            bluetoothConnection(context);
-        } catch (IOException e) {
-            Toast.makeText(context, "Nie działa bluetooth", Toast.LENGTH_LONG).show();
+            // sam szuka zparowanych urzadzen i dodaje do listy
+            addPairedDevicesToList();
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Błąd IOException", Toast.LENGTH_LONG).show();
+        } catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Inny Błąd", Toast.LENGTH_LONG).show();
         }
+        // jak kliknie guzik, to skanuje nowe urządzenia i dodaje do listy
 
-        hsvCircleImageOnClick();
-        onSeekBarChange();
+        /*try {
+            bluetoothConnection();
+        } catch (IOException e) {
+            Context context = getApplicationContext();
+            Toast.makeText(context, "Błąd bluetooth", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } */
+
+        //hsvCircleImageOnClick();
+        //onSeekBarChange();
     }
 
+    private void setOnItemClickListenerOnListView(){
+        ListView list = (ListView)findViewById(R.id.ListView01);
+        //setOnItemClickListener
+    }
 
-
-    void bluetoothConnection(Context context) throws IOException {
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+    private void addPairedDevicesToList() throws IOException{
+        Toast.makeText(getApplicationContext(), "Szukam", Toast.LENGTH_SHORT).show();
         final int REQUEST_ENABLE_BT = 1;
 
-        if (mBluetoothAdapter == null ){
-            // jak bluetootha nie da sie właczyc ( nie ma )
-            CharSequence text = "Bluetooth not available";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            finish();
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
+        }
 
-        } else {
-
-            if (!mBluetoothAdapter.isEnabled()) {
-                // jak bluetooth nie jest enablied ( nieaktywna ikona )
-                Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
-                //onActivityResult(,,enableBluetoothIntent);
-            }
-
+        if (mBluetoothAdapter.isEnabled()) {
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
-            if (pairedDevices.size() > 0){
+            if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
                     String deviceName = device.getName();
-                    //String deviceHardwareAddress = device.getAddress(); // MAC address
-                    Toast.makeText(context, deviceName, Toast.LENGTH_LONG).show();
-                    if(device.getName().equals("HC-06"))
-                    {
+                    String deviceHardwareAddress = device.getAddress(); // MAC address
+                    Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
+                    if (device.getName().equals("HC-06")) {
                         mmDevice = device;
-                        Toast.makeText(context, "Device found!!!", Toast.LENGTH_LONG).show();
-                        break;
+                        Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
+
                     }
+                    adapter.add(deviceName);
                 }
 
-            }
-            else {
-                Toast.makeText(context, "No paired devices found", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
             }
 
             UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
             BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
             mmSocket.connect();
             mmOutputStream = mmSocket.getOutputStream();
-
+        } else{
+            Toast.makeText(getApplicationContext(), "Enable Bluetooth to get device", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void searchForBluetoothDevices(View view) throws IOException {
+        // skanuje, żeby znaleźć nowe urzadznia
 
     }
+
+    private BluetoothAdapter getBluetoothAdapter(){
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null ) {
+            // jak bluetootha nie da sie właczyc ( nie ma )
+            Context context = getApplicationContext();
+            Toast.makeText(context, "Moduł bluetooth nie został wykryty", Toast.LENGTH_LONG).show();
+            finish();
+        }
+        return mBluetoothAdapter;
+    }
+
+    void bluetoothConnection() throws IOException {
+
+        final int REQUEST_ENABLE_BT = 1;
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            // jak bluetooth nie jest enablied ( nieaktywna ikona )
+            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
+            //onActivityResult(,,enableBluetoothIntent);
+
+        }
+        if (mBluetoothAdapter.isEnabled()) {
+            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+            if (pairedDevices.size() > 0) {
+                // There are paired devices. Get the name and address of each paired device.
+                for (BluetoothDevice device : pairedDevices) {
+                    String deviceName = device.getName();
+                    //String deviceHardwareAddress = device.getAddress(); // MAC address
+                    Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
+                    if (device.getName().equals("HC-06")) {
+                        mmDevice = device;
+                        Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
+                        break;
+                    }
+                }
+
+            } else {
+                Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
+            }
+
+            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+            BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            mmSocket.connect();
+            mmOutputStream = mmSocket.getOutputStream();
+        }
+    }
+
+
 
     private void sendData(String msg) throws IOException {
         mmOutputStream.write("1".getBytes());
