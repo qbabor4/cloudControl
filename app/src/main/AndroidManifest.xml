@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- android:roundIcon="@mipmap/ic_launcher_round" -->
+<?xml version="1.0" encoding="utf-8"?><!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cloud.cloudcontrol">
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
@@ -10,16 +10,22 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".BluetoothConnection">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+
         </activity>
     </application>
 
