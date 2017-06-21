@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         - zmiana nazwy tego pliku i xml tu i w manifescie na control_screen
         - okragłe logo (manifest)
         - zrobic ten splash ze stylem w drawable na poczatku a tak jak jest teraz z wątkiem
+        - dopisac tam do bitmapy obrazek
      */
 
     public int hue = 0; // 0-360

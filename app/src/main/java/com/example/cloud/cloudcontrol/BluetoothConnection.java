@@ -31,6 +31,7 @@ public class BluetoothConnection extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
 
