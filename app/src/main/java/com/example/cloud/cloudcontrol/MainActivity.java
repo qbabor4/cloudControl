@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
         - zmienic activity intentem
         - wyswietlić logo jak sie będzie włączać apka
         - najpierw logo jako main. potem przechodzi na
+        - portrait w kazdym activity czy tylko w 1 miejscu w manifescie?
+        - zmiana nazwy tego pliku i xml tu i w manifescie na control_screen
+        - okragłe logo (manifest)
+        - zrobic ten splash ze stylem w drawable na poczatku a tak jak jest teraz z wątkiem
      */
 
     public int hue = 0; // 0-360
@@ -65,11 +69,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent bluetoothConnectionIntent = new Intent(this, BluetoothConnection.class);
-        //bluetoothConnectionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity( bluetoothConnectionIntent  );
-        finish();
-        System.exit(0);
+
 
         // pokazac activity logo na poczatku.
         // przejsc z niego od razu do bluetootha
