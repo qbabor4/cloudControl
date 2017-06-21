@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         - dodac activity do manifestu
         - dodac activity inaczej https://developer.android.com/training/basics/firstapp/starting-activity.html
         - zmienic activity intentem
+        - wyswietlić logo jak sie będzie włączać apka
+        - najpierw logo jako main. potem przechodzi na
      */
 
     public int hue = 0; // 0-360
@@ -61,13 +63,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // tu zmienic intentem a zostawic normalne
         setContentView(R.layout.activity_main);
 
         Intent bluetoothConnectionIntent = new Intent(this, BluetoothConnection.class);
+        //bluetoothConnectionIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity( bluetoothConnectionIntent  );
+        finish();
+        System.exit(0);
 
-        // ^ tu ma zmianic na ekran z wyborem urzadznia i szukac ( jak po cofnieciu przejdzie do tego ekranu, to poprawic)
+        // pokazac activity logo na poczatku.
+        // przejsc z niego od razu do bluetootha
+        // stamtad do hsv jak ok
 
         //hsvCircleImageOnClick();
         //onSeekBarChange();
