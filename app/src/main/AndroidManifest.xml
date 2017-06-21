@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- android:roundIcon="@mipmap/ic_launcher_round" --> <!-- android:theme="@style/FullscreenTheme" android:theme="@style/FullscreenTheme"-->
+<?xml version="1.0" encoding="utf-8"?><!-- android:roundIcon="@mipmap/ic_launcher_round" --><!-- android:theme="@style/FullscreenTheme" android:theme="@style/FullscreenTheme" -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cloud.cloudcontrol">
 
@@ -13,18 +13,14 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".FullscreenActivityStartupScreen"
-
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:name=".StratupActivity"
+            android:theme="@style/splashScreenTheme"
             android:screenOrientation="portrait" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <activity
@@ -32,9 +28,9 @@
             android:screenOrientation="portrait">
 
         </activity>
-
-        <activity android:name=".BluetoothConnection"
-                android:screenOrientation="portrait" >
+        <activity
+            android:name=".BluetoothConnection"
+            android:screenOrientation="portrait">
 
         </activity>
 
