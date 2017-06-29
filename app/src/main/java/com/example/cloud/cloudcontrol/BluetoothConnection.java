@@ -4,9 +4,10 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,7 +28,7 @@ public class BluetoothConnection extends ListActivity {
     static OutputStream mmOutputStream = null;
 
     //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
-    ArrayList<String> listItems = new ArrayList<String>();
+    ArrayList<String> listItems = new ArrayList<>();
 
     ArrayAdapter<String> adapter;
 
@@ -37,12 +38,15 @@ public class BluetoothConnection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
 
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listItems);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
         setListAdapter(adapter);
-        setOnItemClickListenerOnListView();
-        //setFinalHsvCircleRadius();
+        setOnItemClickListenerOnListView(); // zrobić w xml
 
         mBluetoothAdapter = getBluetoothAdapter();
+
+        // Register for broadcasts when a device is discovered.
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
 
         try {
             addPairedDevicesToList(); // looks for paired devices
@@ -53,15 +57,7 @@ public class BluetoothConnection extends ListActivity {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Inny Błąd", Toast.LENGTH_LONG).show();
         }
-        // jak kliknie guzik, to skanuje nowe urządzenia i dodaje do listy
 
-         /*try {
-            bluetoothConnection();
-        } catch (IOException e) {
-            Context context = getApplicationContext();
-            Toast.makeText(context, "Błąd bluetooth", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } */
     }
 
     private void setOnItemClickListenerOnListView(){
@@ -71,14 +67,13 @@ public class BluetoothConnection extends ListActivity {
     }
 
     private void addPairedDevicesToList() throws IOException {
-        Toast.makeText(getApplicationContext(), "Szukam", Toast.LENGTH_SHORT).show();
-
 
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
             // zobaczyc czy aktywował bluetooth
         } else {
+            Toast.makeText(getApplicationContext(), "Szukam", Toast.LENGTH_SHORT).show();
             // when bluetooth is already enabled
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
             if (pairedDevices.size() > 0) {
@@ -101,18 +96,14 @@ public class BluetoothConnection extends ListActivity {
                             // bluetooth module in cloud is not on
                             Toast.makeText(getApplicationContext(), "Urządzenie nieaktywne", Toast.LENGTH_LONG).show();
                             //e.printStackTrace();
-
                         }
                     }
-
                 }
-
-            } else {
+            }
+            else {
                 Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
             }
-
         }
-
     }
 
     private void connectToCloud() throws IOException{
@@ -131,12 +122,12 @@ public class BluetoothConnection extends ListActivity {
             // Make sure the request was successful
             if(resultCode != RESULT_CANCELED){ // -1
             //if (resultCode == RESULT_OK){
-                Toast.makeText(getApplicationContext(), "Nie canceled"+ resultCode, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Yes"+ resultCode, Toast.LENGTH_LONG).show();
                 // szuakać paired devices, a jak nie połączy z chmurą, to szukać aktywnych
             }
             else { // 0
                 Toast.makeText(getApplicationContext(), "canceled" + resultCode, Toast.LENGTH_LONG).show();
-                // nic nie robić
+                // Do nothing
             }
         }
     }
@@ -145,10 +136,51 @@ public class BluetoothConnection extends ListActivity {
 
     }
 
-    public void searchForBluetoothDevices(View view) throws IOException {
+    // Create a BroadcastReceiver for ACTION_FOUND.
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(getApplicationContext(), "onRecive", Toast.LENGTH_LONG).show();
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                Toast.makeText(getApplicationContext(), "jest jakiś", Toast.LENGTH_LONG).show();
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                adapter.add(deviceName);
+                if (device.getName().equals("HC-06")) {
+                    //adapter.add(deviceName);
+                    Toast.makeText(getApplicationContext(), "znalazłem!", Toast.LENGTH_LONG).show();
+                    mBluetoothAdapter.cancelDiscovery();
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // unregister the ACTION_FOUND receiver.
+        unregisterReceiver(mReceiver);
+    }
+
+    public void searchForBluetoothDevices(View view){
         // skanuje, żeby znaleźć nowe urzadznia
         // sprawdzic czy bluetooth jest aktywny
-
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT); // tu moze inny kod requesta ( inny int np. 2) i to potem sprawdzac w onActivityResult
+            // zobaczyc czy aktywował bluetooth
+            // jak tak to skanuje zeby znależć nowe urządzenia
+        } else {
+            Toast.makeText(getApplicationContext(), "Szukam nowych urządzeń", Toast.LENGTH_LONG).show();
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+            mBluetoothAdapter.startDiscovery();
+        }
     }
 
     private BluetoothAdapter getBluetoothAdapter(){
@@ -163,6 +195,6 @@ public class BluetoothConnection extends ListActivity {
     }
 
     static void sendData(String msg) throws IOException {
-        mmOutputStream.write("1".getBytes());
+        mmOutputStream.write(msg.getBytes());
     }
 }

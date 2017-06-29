@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         - błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
         - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
         - jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
+        - jak sie nacisnie "tak" na "czy włączyc bluetooth", to jest czasami "unfortunatelly bluetooth has stoped" (potem jest ok, bo działa)
+        - mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
+        - zmianic connectToCloud() na takie jak w android bluetooth
+        - zobaczyc jaki jest mac address mojego hc-06
+        - jak szuka to animacja ładowania ( obracajace sie kółko )
      */
 
     public int hue = 0; // 0-360
@@ -64,14 +69,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-        // pokazac activity logo na poczatku.
-        // przejsc z niego od razu do bluetootha
-        // stamtad do hsv jak ok
-
-        //hsvCircleImageOnClick();
-        //onSeekBarChange();
+        setFinalHsvCircleRadius();
+        hsvCircleImageOnClick();
+        onSeekBarChange();
     }
 
     private void setFinalHsvCircleRadius(){
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                         setRgbVariables(x, y);
                         changePreviewEllipseColor();
                         try {
-                            BluetoothConnection.sendData("lol");
+                            BluetoothConnection.sendData("1");
                         } catch (IOException e){
                             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
                         }
@@ -156,7 +156,11 @@ public class MainActivity extends AppCompatActivity {
                 value = progress /100.;
                 setRgbVariables();
                 changePreviewEllipseColor();
-
+                try {
+                    BluetoothConnection.sendData("lol"); // wysyła kolor
+                } catch (IOException e){
+                    Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
