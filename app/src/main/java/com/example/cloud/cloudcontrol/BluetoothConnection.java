@@ -154,50 +154,12 @@ public class BluetoothConnection extends ListActivity {
     private BluetoothAdapter getBluetoothAdapter(){
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter == null ) {
-            // jak bluetootha nie da sie właczyc ( nie ma )
-            Context context = getApplicationContext();
-            Toast.makeText(context, "Moduł bluetooth nie został wykryty", Toast.LENGTH_LONG).show();
+            // When there is no bluetooth module
+            //Context context = getApplicationContext();
+            Toast.makeText( getApplicationContext(), "Moduł bluetooth nie został wykryty", Toast.LENGTH_LONG).show();
             finish();
         }
         return mBluetoothAdapter;
-    }
-
-    void bluetoothConnection() throws IOException {
-
-        final int REQUEST_ENABLE_BT = 1;
-
-        if (!mBluetoothAdapter.isEnabled()) {
-            // jak bluetooth nie jest enablied ( nieaktywna ikona )
-            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
-            //onActivityResult(,,enableBluetoothIntent);
-
-        }
-        if (mBluetoothAdapter.isEnabled()) {
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
-            if (pairedDevices.size() > 0) {
-                // There are paired devices. Get the name and address of each paired device.
-                for (BluetoothDevice device : pairedDevices) {
-                    String deviceName = device.getName();
-                    //String deviceHardwareAddress = device.getAddress(); // MAC address
-                    Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
-                    if (device.getName().equals("HC-06")) {
-                        mmDevice = device;
-                        Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
-                        break;
-                    }
-                }
-
-            } else {
-                Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
-            }
-
-            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-            BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-            mmSocket.connect();
-            mmOutputStream = mmSocket.getOutputStream();
-        }
     }
 
     static void sendData(String msg) throws IOException {

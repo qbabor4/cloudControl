@@ -33,30 +33,20 @@ public class MainActivity extends AppCompatActivity {
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - Bluetooth low Energy
-        - onActivityResult zobaczyc co wybrał przy aktywacji bluetootha
         - bluetooth discovery
-        - dac do paczki obie klasy
-        - lista divajsów w innym activity i jak wybierze, to wraca do normalnego activity ( finish() i wraca do koła hsv )
-        - pokazac liste ze sparowanymi urzadzeniami. Przycik szukaj urządzeń i parowanie
         - przełączyc z jednego layouta do drugiego
-        - najpierw sam szuka zparowanych urządzeń
-        - potem na guziku szuka nowych urzadzeń
         - dopisac listenery do xml
         - disabled na buttonie search jak szuka
-        - dodac activity do manifestu
         - dodac activity inaczej https://developer.android.com/training/basics/firstapp/starting-activity.html
         - zmienic activity intentem
-        - wyswietlić logo jak sie będzie włączać apka
-        - najpierw logo jako main. potem przechodzi na
-        - portrait w kazdym activity czy tylko w 1 miejscu w manifescie?
         - zmiana nazwy tego pliku i xml tu i w manifescie na control_screen
         - okragłe logo (manifest)
-        - zrobic ten splash ze stylem w drawable na poczatku a tak jak jest teraz z wątkiem
-        - dopisac tam do bitmapy obrazek
+        - zobaczyc jak zrobić ruchomy splash screen
         - jak mam kilka startActivityForResult to jak zrobić do nich osobne onActivityResult onActivityResult()?
         - sprawdzic jak mozna inaczej niż po nazwie zobaczyc czy to moje urządzenie
-        - błąd IOexception chyba wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
+        - błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
         - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
+        - jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
      */
 
     public int hue = 0; // 0-360
