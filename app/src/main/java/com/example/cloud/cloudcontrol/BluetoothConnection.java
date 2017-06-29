@@ -20,6 +20,8 @@ import java.util.UUID;
 
 public class BluetoothConnection extends ListActivity {
 
+    final int REQUEST_ENABLE_BT = 1;
+
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
     static OutputStream mmOutputStream = null;
@@ -43,8 +45,7 @@ public class BluetoothConnection extends ListActivity {
         mBluetoothAdapter = getBluetoothAdapter();
 
         try {
-            // sam szuka zparowanych urzadzen i dodaje do listy
-            addPairedDevicesToList();
+            addPairedDevicesToList(); // looks for paired devices
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Błąd IOException", Toast.LENGTH_LONG).show();
@@ -66,49 +67,87 @@ public class BluetoothConnection extends ListActivity {
     private void setOnItemClickListenerOnListView(){
         //ListView listView = (ListView)findViewBy();
         //setOnItemClickListener
+        // jak kliknie na coś z listy
     }
 
     private void addPairedDevicesToList() throws IOException {
         Toast.makeText(getApplicationContext(), "Szukam", Toast.LENGTH_SHORT).show();
-        final int REQUEST_ENABLE_BT = 1;
+
 
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT);
-        }
-
-        if (mBluetoothAdapter.isEnabled()) {
+            // zobaczyc czy aktywował bluetooth
+        } else {
+            // when bluetooth is already enabled
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
                     String deviceName = device.getName();
                     String deviceHardwareAddress = device.getAddress(); // MAC address
-                    Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
-                    if (device.getName().equals("HC-06")) {
-                        mmDevice = device;
-                        Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
 
+                    if (device.getName().equals("HC-06")) {
+                        adapter.add(deviceName);
+                        mmDevice = device;
+                        //Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
+                        // próbuje połączyc z tym ( moze byc zparowane ale nie włączone )
+                        try {
+                            connectToCloud();
+                            Toast.makeText(getApplicationContext(), "Urządzenie aktywne, połączono", Toast.LENGTH_LONG).show();
+                            // przejsc do koła hsv
+                        } catch (IOException e){
+                            // bluetooth module in cloud is not on
+                            Toast.makeText(getApplicationContext(), "Urządzenie nieaktywne", Toast.LENGTH_LONG).show();
+                            //e.printStackTrace();
+
+                        }
                     }
-                    adapter.add(deviceName);
+
                 }
 
             } else {
                 Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
             }
 
-            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-            BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-            mmSocket.connect();
-            mmOutputStream = mmSocket.getOutputStream();
-        } else{
-            Toast.makeText(getApplicationContext(), "Enable Bluetooth to get device", Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    private void connectToCloud() throws IOException{
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+        BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+        mmSocket.connect();
+        mmOutputStream = mmSocket.getOutputStream();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        // jak tu wejdzie przez szukanie, to rozróznić ( patrzec na liste ze sparowanymi?)
+
+        // Check which request we're responding to
+        if ( requestCode == REQUEST_ENABLE_BT){
+            // Make sure the request was successful
+            if(resultCode != RESULT_CANCELED){ // -1
+            //if (resultCode == RESULT_OK){
+                Toast.makeText(getApplicationContext(), "Nie canceled"+ resultCode, Toast.LENGTH_LONG).show();
+                // szuakać paired devices, a jak nie połączy z chmurą, to szukać aktywnych
+            }
+            else { // 0
+                Toast.makeText(getApplicationContext(), "canceled" + resultCode, Toast.LENGTH_LONG).show();
+                // nic nie robić
+            }
+        }
+    }
+
+    private void searchForPairedDevices(){
+
     }
 
     public void searchForBluetoothDevices(View view) throws IOException {
         // skanuje, żeby znaleźć nowe urzadznia
+        // sprawdzic czy bluetooth jest aktywny
 
     }
 

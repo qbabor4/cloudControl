@@ -53,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
         - okragłe logo (manifest)
         - zrobic ten splash ze stylem w drawable na poczatku a tak jak jest teraz z wątkiem
         - dopisac tam do bitmapy obrazek
+        - jak mam kilka startActivityForResult to jak zrobić do nich osobne onActivityResult onActivityResult()?
+        - sprawdzic jak mozna inaczej niż po nazwie zobaczyc czy to moje urządzenie
+        - błąd IOexception chyba wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
+        - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
      */
 
     public int hue = 0; // 0-360
