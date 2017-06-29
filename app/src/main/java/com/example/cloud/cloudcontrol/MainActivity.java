@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         - zmianic connectToCloud() na takie jak w android bluetooth
         - zobaczyc jaki jest mac address mojego hc-06
         - jak szuka to animacja ładowania ( obracajace sie kółko )
+        - jak się zminimalizuje, to wraca do bluetootha i znowu chce parować...
+        - disable back button ( strzałka w lawo na dolnym pasku )
+        - nie szuaka dobrze urządzeń...
      */
 
     public int hue = 0; // 0-360

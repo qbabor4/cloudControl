@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -32,6 +33,9 @@ public class BluetoothConnection extends ListActivity {
 
     ArrayAdapter<String> adapter;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -47,6 +51,8 @@ public class BluetoothConnection extends ListActivity {
         // Register for broadcasts when a device is discovered.
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
+
+        Log.d("start", "1");
 
         try {
             addPairedDevicesToList(); // looks for paired devices
@@ -91,7 +97,12 @@ public class BluetoothConnection extends ListActivity {
                         try {
                             connectToCloud();
                             Toast.makeText(getApplicationContext(), "Urządzenie aktywne, połączono", Toast.LENGTH_LONG).show();
-                            // przejsc do koła hsv
+                            // changes activity to main
+
+                            Intent mainIntent = new Intent(this, MainActivity.class);
+                            startActivity(mainIntent);
+                            finish();
+
                         } catch (IOException e){
                             // bluetooth module in cloud is not on
                             Toast.makeText(getApplicationContext(), "Urządzenie nieaktywne", Toast.LENGTH_LONG).show();
@@ -139,7 +150,8 @@ public class BluetoothConnection extends ListActivity {
     // Create a BroadcastReceiver for ACTION_FOUND.
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(getApplicationContext(), "onRecive", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "onRecive", Toast.LENGTH_LONG).show();
+            Log.d("szukam", "33454");
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 Toast.makeText(getApplicationContext(), "jest jakiś", Toast.LENGTH_LONG).show();
@@ -149,6 +161,7 @@ public class BluetoothConnection extends ListActivity {
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
                 adapter.add(deviceName);
+                adapter.notifyDataSetChanged();
                 if (device.getName().equals("HC-06")) {
                     //adapter.add(deviceName);
                     Toast.makeText(getApplicationContext(), "znalazłem!", Toast.LENGTH_LONG).show();
