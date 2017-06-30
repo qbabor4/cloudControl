@@ -50,11 +50,10 @@ public class MainActivity extends AppCompatActivity {
         - jak sie nacisnie "tak" na "czy włączyc bluetooth", to jest czasami "unfortunatelly bluetooth has stoped" (potem jest ok, bo działa)
         - mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
         - zmianic connectToCloud() na takie jak w android bluetooth
-        - zobaczyc jaki jest mac address mojego hc-06
+        - zobaczyc jaki jest mac address moich hc-06
         - jak szuka to animacja ładowania ( obracajace sie kółko )
-        - jak się zminimalizuje, to wraca do bluetootha i znowu chce parować...
-        - disable back button ( strzałka w lawo na dolnym pasku )
         - nie szuaka dobrze urządzeń...
+        - wysylac ze znacznikim koncowym
      */
 
     public int hue = 0; // 0-360
@@ -75,6 +74,11 @@ public class MainActivity extends AppCompatActivity {
         setFinalHsvCircleRadius();
         hsvCircleImageOnClick();
         onSeekBarChange();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and cant par again )
     }
 
     private void setFinalHsvCircleRadius(){
@@ -104,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
                     if (event.getAction() == MotionEvent.ACTION_MOVE) {
                         setRgbVariables(x, y);
                         changePreviewEllipseColor();
+                        String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendData("1");
+                            BluetoothConnection.sendData( hexColor );
+                            Log.d(hexColor, "hexColor");
                         } catch (IOException e){
                             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
                         }
@@ -150,6 +156,11 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleBlackOverlay.setAlpha(imageAlpha);
     }
 
+    private String changeRGBColorTOHex(int red, int green, int blue){
+
+        return String.format("#%02x%02x%02x", red, green, blue); // change rgb values 0-255 to hex String
+    }
+
     private void onSeekBarChange(){
         final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -159,8 +170,10 @@ public class MainActivity extends AppCompatActivity {
                 value = progress /100.;
                 setRgbVariables();
                 changePreviewEllipseColor();
+                String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendData("lol"); // wysyła kolor
+                    BluetoothConnection.sendData( hexColor ); // sends color
+                    Log.d(hexColor, "hexColor");
                 } catch (IOException e){
                     Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
                 }
