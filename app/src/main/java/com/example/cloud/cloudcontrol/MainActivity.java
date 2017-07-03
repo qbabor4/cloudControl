@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         - jak szuka to animacja ładowania ( obracajace sie kółko )
         - nie szuaka dobrze urządzeń...
         - wysylac ze znacznikim koncowym
+        - przeniesc pliki arduino do folderu apki androida i dac do githuba
+        - dodawac zera jak jest tylko 1 znak w hexStringu ( moze byc długosc 5 albo nawet 3
+        - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
+        - zamiana rgb na hex z dopisanymi zerami
      */
 
     public int hue = 0; // 0-360
@@ -110,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         changePreviewEllipseColor();
                         String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendData( hexColor );
+                            BluetoothConnection.sendData( hexColor + '>'); // send color; > is end marker
                             Log.d(hexColor, "hexColor");
                         } catch (IOException e){
                             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
@@ -156,9 +160,13 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleBlackOverlay.setAlpha(imageAlpha);
     }
 
+    //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0)
     private String changeRGBColorTOHex(int red, int green, int blue){
+        String hexR = Integer.toHexString(red);
+        String hexG = Integer.toHexString(green);
+        String hexB = Integer.toHexString(blue);
 
-        return String.format("#%02x%02x%02x", red, green, blue); // change rgb values 0-255 to hex String
+        return hexR + hexG + hexB;
     }
 
     private void onSeekBarChange(){
@@ -172,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 changePreviewEllipseColor();
                 String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendData( hexColor ); // sends color
+                    BluetoothConnection.sendData( hexColor + '>'); // send color; > is end marker
                     Log.d(hexColor, "hexColor");
                 } catch (IOException e){
                     Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
