@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and cant par again )
+        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again )
     }
 
     private void setFinalHsvCircleRadius(){
@@ -163,10 +163,21 @@ public class MainActivity extends AppCompatActivity {
     //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0)
     private String changeRGBColorTOHex(int red, int green, int blue){
         String hexR = Integer.toHexString(red);
+        hexR = checkHexData(hexR);
         String hexG = Integer.toHexString(green);
+        hexG = checkHexData(hexG);
         String hexB = Integer.toHexString(blue);
+        hexB = checkHexData(hexB);
 
         return hexR + hexG + hexB;
+    }
+
+    private String checkHexData(String hexColor){
+        if (hexColor.length() == 1){
+            hexColor+= "0";
+        }
+
+        return hexColor;
     }
 
     private void onSeekBarChange(){
