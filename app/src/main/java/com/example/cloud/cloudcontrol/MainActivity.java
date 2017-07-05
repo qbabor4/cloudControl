@@ -53,12 +53,10 @@ public class MainActivity extends AppCompatActivity {
         - zobaczyc jaki jest mac address moich hc-06
         - jak szuka to animacja ładowania ( obracajace sie kółko )
         - nie szuaka dobrze urządzeń...
-        - wysylac ze znacznikim koncowym
-        - przeniesc pliki arduino do folderu apki androida i dac do githuba
-        - dodawac zera jak jest tylko 1 znak w hexStringu ( moze byc długosc 5 albo nawet 3
         - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
-        - zamiana rgb na hex z dopisanymi zerami
-        - sprawdzic czy dopisuje sie zera tylko na końcu
+        - za piewszym razem moze pokazywac uzytkownikowi tę chmurę z którą chce sparować , a potem automatycznie
+        - zbyt czarne kołko blackoveraly ( moze zrobic szare albo inaczej zmianiac opacity? (Nie liniowo))
+        - dodać cień do guzików i dodać guziki
      */
 
     public int hue = 0; // 0-360
@@ -85,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again )
     }
+
+    public void onOnOffClick(View view){
+        try {
+            BluetoothConnection.sendData('#' + "000000" + '>'); // send color
+        } catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void setFinalHsvCircleRadius(){
         final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
@@ -115,13 +123,14 @@ public class MainActivity extends AppCompatActivity {
                         changePreviewEllipseColor();
                         String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendData( hexColor ); // send color
+                            BluetoothConnection.sendData( '#' + hexColor + '>' ); // send color
                             Log.d(hexColor, "hexColor");
                             Log.d(String.valueOf(red), "r");
                             Log.d(String.valueOf(green), "g");
                             Log.d(String.valueOf(blue), "b");
                         } catch (IOException e){
                             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -199,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 changePreviewEllipseColor();
                 String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendData( hexColor ); // send color
+                    BluetoothConnection.sendData( '#' + hexColor + '>' ); // send color
                     Log.d(hexColor, "hexColor");
                     Log.d(String.valueOf(red), "r");
                     Log.d(String.valueOf(green), "g");

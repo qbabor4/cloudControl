@@ -11,54 +11,61 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/hsvCircleDescription"
-        android:layout_marginTop="14dp"
         app:srcCompat="@drawable/hsv_circle_fit"
-        android:layout_below="@+id/textView5"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/textView16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
-        android:text="@string/Brightness"
-        android:layout_below="@+id/hsvCircleImage"
+        android:layout_below="@+id/imageButton9"
         android:layout_centerHorizontal="true" />
 
     <SeekBar
         android:id="@+id/seekBar1"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_alignEnd="@+id/hsvCircleImage"
-        android:layout_alignLeft="@+id/hsvCircleImage"
-        android:layout_alignRight="@+id/hsvCircleImage"
-        android:layout_alignStart="@+id/hsvCircleImage"
-        android:layout_below="@+id/textView16"
         android:max="@integer/maxSliderValue"
         android:progress="@integer/sliderProgress"
-        android:visibility="visible" />
+        android:visibility="visible"
+        android:layout_below="@+id/hsvCircleImage"
+        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/hsvCircleImage"
+        android:layout_marginTop="14dp"
+        android:layout_alignRight="@+id/hsvCircleImage"
+        android:layout_alignEnd="@+id/hsvCircleImage" />
 
     <ImageView
         android:id="@+id/hsvCircleBlackOverlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/overlay_ellipse"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:alpha="0.0"
         android:contentDescription="@string/hsvCircleBlackOverlayDescription"
-        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:src="@drawable/overlay_ellipse"
         android:layout_alignTop="@+id/hsvCircleImage"
+        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/hsvCircleImage"
         android:layout_alignBottom="@+id/hsvCircleImage"
         android:layout_alignRight="@+id/hsvCircleImage"
-        android:alpha="0.0" />
+        android:layout_alignEnd="@+id/hsvCircleImage" />
 
     <ImageView
         android:id="@+id/prewiew_ellipse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/previewEllipseDescription"
+        android:src="@drawable/preview_ellipse"
+        android:layout_alignTop="@+id/hsvCircleImage"
+        android:layout_alignLeft="@+id/hsvCircleImage"
+        android:layout_alignStart="@+id/hsvCircleImage" />
+
+    <ImageButton
+        android:id="@+id/imageButton9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        android:onClick="onOnOffClick"
+        app:srcCompat="@drawable/button_noshadow_cut_01"
+        android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/hsvCircleImage"
         android:layout_alignStart="@+id/hsvCircleImage"
-        android:layout_alignTop="@+id/hsvCircleImage"
-        android:contentDescription="@string/previewEllipseDescription"
-        android:src="@drawable/preview_ellipse" />
+        android:layout_marginTop="11dp" />
 
 
 </RelativeLayout>
