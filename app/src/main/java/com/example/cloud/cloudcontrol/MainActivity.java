@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         - dodawac zera jak jest tylko 1 znak w hexStringu ( moze byc długosc 5 albo nawet 3
         - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
         - zamiana rgb na hex z dopisanymi zerami
+        - sprawdzic czy dopisuje sie zera tylko na końcu
      */
 
     public int hue = 0; // 0-360
@@ -114,8 +115,11 @@ public class MainActivity extends AppCompatActivity {
                         changePreviewEllipseColor();
                         String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendData( hexColor + '>'); // send color; > is end marker
+                            BluetoothConnection.sendData( hexColor ); // send color
                             Log.d(hexColor, "hexColor");
+                            Log.d(String.valueOf(red), "r");
+                            Log.d(String.valueOf(green), "g");
+                            Log.d(String.valueOf(blue), "b");
                         } catch (IOException e){
                             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
                         }
@@ -162,20 +166,24 @@ public class MainActivity extends AppCompatActivity {
 
     //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0)
     private String changeRGBColorTOHex(int red, int green, int blue){
-        String hexR = Integer.toHexString(red);
-        hexR = checkHexData(hexR);
-        String hexG = Integer.toHexString(green);
-        hexG = checkHexData(hexG);
-        String hexB = Integer.toHexString(blue);
-        hexB = checkHexData(hexB);
 
-        return hexR + hexG + hexB;
+        String hexR = decToHex(red);
+        Log.d("hexR", hexR );
+        String hexG = decToHex(green);
+        Log.d("hexG", hexG );
+        String hexB = decToHex(blue);
+        Log.d("hexB", hexB );
+
+        return hexR+ hexG + hexB;
     }
 
-    private String checkHexData(String hexColor){
-        if (hexColor.length() == 1){
-            hexColor+= "0";
-        }
+    private String decToHex(int decColor){ // dać mu zero
+        String hexColor = "";
+        char hexArray[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+        hexColor += hexArray[ decColor % 16 ];
+        decColor = decColor / 16;
+        hexColor = hexArray[ decColor % 16 ] + hexColor;
 
         return hexColor;
     }
@@ -191,8 +199,11 @@ public class MainActivity extends AppCompatActivity {
                 changePreviewEllipseColor();
                 String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendData( hexColor + '>'); // send color; > is end marker
+                    BluetoothConnection.sendData( hexColor ); // send color
                     Log.d(hexColor, "hexColor");
+                    Log.d(String.valueOf(red), "r");
+                    Log.d(String.valueOf(green), "g");
+                    Log.d(String.valueOf(blue), "b");
                 } catch (IOException e){
                     Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
                 }
