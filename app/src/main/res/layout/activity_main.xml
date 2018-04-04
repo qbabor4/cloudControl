@@ -59,13 +59,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
-        android:background="@android:color/transparent"
+        android:background="@drawable/button_shadow"
         android:onClick="onOnOffClick"
         app:srcCompat="@drawable/button_noshadow_cut_01"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/hsvCircleImage"
-        android:layout_alignStart="@+id/hsvCircleImage"
-        android:layout_marginTop="11dp" />
+        android:layout_alignStart="@+id/hsvCircleImage" />
 
 
 </RelativeLayout>

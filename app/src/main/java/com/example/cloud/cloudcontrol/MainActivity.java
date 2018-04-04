@@ -1,5 +1,6 @@
 package com.example.cloud.cloudcontrol;
 
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -30,6 +31,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     /* TODO
+        - zrobic z tego bibliotekę i ją importować.
         - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
         - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
         - Bluetooth low Energy
@@ -57,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
         - za piewszym razem moze pokazywac uzytkownikowi tę chmurę z którą chce sparować , a potem automatycznie
         - zbyt czarne kołko blackoveraly ( moze zrobic szare albo inaczej zmianiac opacity? (Nie liniowo))
         - dodać cień do guzików i dodać guziki
+        - zmienic kolor prewiew elipse ( tak jak zmieniłem *0.65 overlay ellipse
+        - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
+
      */
 
-    public int hue = 0; // 0-360
+    public int hue = 0; // 0-360 // po co public?? TODO
     public double saturation = 0; // 0-1
     public double value = 1; // 0-1
 
@@ -68,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     public int blue = 255; // 0-255
 
     private double hsvCircleRadius;
+
+    private boolean isTurnedOn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +89,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again )
+        // zrobić tak, żeby wywalało bluetooth activity i przechodziło do tego
     }
 
     public void onOnOffClick(View view){
         try {
-            BluetoothConnection.sendData('#' + "000000" + '>'); // send color
+            if (isTurnedOn) {
+                BluetoothConnection.sendMessage(Colors.BLACK.getColor()); // send color
+                isTurnedOn = false;
+            } else {
+                BluetoothConnection.sendMessage(changeRGBColorTOHex(red, green, blue));
+                isTurnedOn = true;
+            }
         } catch (IOException e){
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
@@ -123,18 +137,17 @@ public class MainActivity extends AppCompatActivity {
                         changePreviewEllipseColor();
                         String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendData( '#' + hexColor + '>' ); // send color
+                            BluetoothConnection.sendMessage(changeRGBColorTOHex(red, green, blue)); // send color
                             Log.d(hexColor, "hexColor");
                             Log.d(String.valueOf(red), "r");
                             Log.d(String.valueOf(green), "g");
                             Log.d(String.valueOf(blue), "b");
                         } catch (IOException e){
-                            Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Not Sent", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
                 }
-
                 return true;
             }
         });
@@ -163,18 +176,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void changePreviewEllipseColor(){
-        ImageView previewEllipse = (ImageView)findViewById(R.id.prewiew_ellipse);
+        ImageView previewEllipse = (ImageView)findViewById(R.id.prewiew_ellipse); // to może globalnie ?? TODO
         previewEllipse.setColorFilter(Color.rgb(red, green, blue));
     }
 
     private void changeHsvCircleBlackOverlaysAlpha(int progress){
         final ImageView hsvCircleBlackOverlay = (ImageView) findViewById(R.id.hsvCircleBlackOverlay);
-        float imageAlpha = 1 - (float)progress / 100;
+        float imageAlpha = (1 - (float)progress  / 100 ) * (float)0.65 ;
         hsvCircleBlackOverlay.setAlpha(imageAlpha);
     }
 
     //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0)
-    private String changeRGBColorTOHex(int red, int green, int blue){
+    private String changeRGBColorTOHex(int red, int green, int blue){ // poprawić TODO
 
         String hexR = decToHex(red);
         Log.d("hexR", hexR );
@@ -208,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 changePreviewEllipseColor();
                 String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendData( '#' + hexColor + '>' ); // send color
+                    BluetoothConnection.sendMessage(hexColor); // send color
                     Log.d(hexColor, "hexColor");
                     Log.d(String.valueOf(red), "r");
                     Log.d(String.valueOf(green), "g");

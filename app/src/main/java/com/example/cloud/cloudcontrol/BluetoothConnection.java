@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
+ */
 public class BluetoothConnection extends ListActivity {
 
     final int REQUEST_ENABLE_BT = 1;
@@ -207,7 +210,20 @@ public class BluetoothConnection extends ListActivity {
         return mBluetoothAdapter;
     }
 
-    static void sendData(String msg) throws IOException {
+    private static void sendData(String msg) throws IOException {
         mmOutputStream.write(msg.getBytes());
+    }
+
+    /**
+     * Sends message with protocol known to cloud code on arduino
+     * @param message
+     * @throws IOException
+     */
+    public static void sendMessage(String message) throws IOException {
+        sendData('#' + message + '>');
+    }
+
+    public static void sendStartRainbow() throws  IOException {
+//        sendMessage();
     }
 }
