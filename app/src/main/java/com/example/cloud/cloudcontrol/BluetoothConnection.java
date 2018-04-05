@@ -1,5 +1,6 @@
 package com.example.cloud.cloudcontrol;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,10 +10,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,20 +28,22 @@ import java.util.UUID;
 /**
  * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
  */
-public class BluetoothConnection extends ListActivity {
+public class BluetoothConnection  extends AppCompatActivity {
 
     final int REQUEST_ENABLE_BT = 1;
+
+    private static final String deviceBluetoothName = "HC-06";
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
     static OutputStream mmOutputStream = null;
 
-    //LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS
+    /*LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS */
     ArrayList<String> listItems = new ArrayList<>();
 
     ArrayAdapter<String> adapter;
 
-
+    ListView listView;
 
 
     @Override
@@ -45,9 +52,9 @@ public class BluetoothConnection extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
-        setListAdapter(adapter);
-        setOnItemClickListenerOnListView(); // zrobić w xml
+//        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+//        setListAdapter(adapter);
+        setListView();
 
         mBluetoothAdapter = getBluetoothAdapter();
 
@@ -69,10 +76,16 @@ public class BluetoothConnection extends ListActivity {
 
     }
 
-    private void setOnItemClickListenerOnListView(){
-        //ListView listView = (ListView)findViewBy();
-        //setOnItemClickListener
-        // jak kliknie na coś z listy
+    private void setListView(){
+        listView = (ListView) findViewById(R.id.listView_devices);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), position + " "  + parent + "", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void addPairedDevicesToList() throws IOException {
@@ -85,6 +98,7 @@ public class BluetoothConnection extends ListActivity {
             Toast.makeText(getApplicationContext(), "Szukam", Toast.LENGTH_SHORT).show();
             // when bluetooth is already enabled
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
@@ -92,9 +106,12 @@ public class BluetoothConnection extends ListActivity {
                     String deviceHardwareAddress = device.getAddress(); // MAC address
                     //Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
 
-                    if (device.getName().equals("HC-06")) {
-                        adapter.add(deviceName);
+                    if (device.getName().equals(deviceBluetoothName)) { // bedzie zmienione na moją nazwę
+                        adapter.add(deviceName);  // moze sie da dodawac do listy, a nie adaptera TODO
                         mmDevice = device;
+
+                        // tu bedzie nowy obiekt chmury TODO
+
                         //Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
                         // próbuje połączyc z tym ( moze byc zparowane ale nie włączone )
                         try {
