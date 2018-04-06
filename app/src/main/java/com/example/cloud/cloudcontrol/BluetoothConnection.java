@@ -27,6 +27,7 @@ import java.util.UUID;
  * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
  * jak tylko 1 urzadzenie, to od razu połącz
  * dodać navigation drawer i moze toolbar
+ * zrobic 2 urzadzenie i sprobowac laczys sie tylko z 1 a nie z 2
  */
 public class BluetoothConnection  extends AppCompatActivity {
 
@@ -35,12 +36,11 @@ public class BluetoothConnection  extends AppCompatActivity {
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
-    static OutputStream mmOutputStream = null;
+//    static OutputStream mmOutputStream = null;
 
-    /*LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS */
     ArrayList<CloudDevice> listItems = new ArrayList<>();
 
-    ArrayAdapter<CloudDevice> adapter;
+    ArrayAdapter<CloudDevice> adapter; // moze sie da nie globalnie TODO
 
     ListView listView;
 
@@ -83,6 +83,35 @@ public class BluetoothConnection  extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(), position + " "  + parent + "", Toast.LENGTH_LONG).show();
+
+                CloudDevice cloudDevice = adapter.getItem(position);
+                Toast.makeText(getApplicationContext(), cloudDevice + "", Toast.LENGTH_LONG).show();
+                try {
+//                    cloudDevice.disconnect();
+                    cloudDevice.connect(); // czemu tu nie chce połączyć ,a w dodawnaiu parowanych łączyło ? TODO
+
+                    // czemu tak długo ???? TODO moze tak długo robiło tylko sie pokazywało jak sie połaczyło.
+                    // zrobić jakąś animację łączenia może.. TODO
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("device", cloudDevice);
+                    startActivity(intent);
+                    finish();
+
+                    // jak sie da transient do zmiennych to przechodzi, ale ignoruje te zmienne, a tak nie chce TODO
+
+
+                    // wysłać jakoś obiekt do mainActivity
+                    // zmianic nazwę mainActivity
+                    // przejscie do koła koloró i zamkniecie tego activity TODO
+                } catch (IOException ex){
+                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem \n" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.d("error", ex.toString());
+                } catch (NullPointerException ex){
+                    Log.d("error", ex.toString());
+                }
+                // polaczyc i jak sie bedzie dało, to przejsc do aktywnosci z kołem
+
             }
         });
     }
@@ -98,6 +127,7 @@ public class BluetoothConnection  extends AppCompatActivity {
             // when bluetooth is already enabled
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
+            // zobaczyć bonded state jak jest sparowane i nie jest TODO
 
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
@@ -107,16 +137,15 @@ public class BluetoothConnection  extends AppCompatActivity {
                     //Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
 
                     if (device.getName().equals(EDefaultData.BLUETOOTH_DEVICE_NAME.getData())) { // bedzie zmienione na moją nazwę
-                        Log.d("mac", device.getUuids() + " \n" + device.getAddress() + "\n " + device.getBluetoothClass().toString() + "\n" + device.hashCode() + "\n" + device.getBondState() );
+                        Log.d("mac", device.getAddress() + "\n" + device.getBondState() );
 
+                        // jak sie zmieni adress w ardiuno, to powino sie dac tutaj odczytac i po tym identyfikować
 
                         adapter.add(new CloudDevice(device));  // moze sie da dodawac do listy, a nie adaptera TODO
-                        mmDevice = device;
-
-                        // tu bedzie nowy obiekt chmury TODO
+//                        mmDevice = device;
 
                         //Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
-                        // próbuje połączyc z tym ( moze byc zparowane ale nie włączone )
+                        // próbuje połączyc z tym ( moze byc sparowane ale nie włączone )
 //                        try {
 //                            connectToCloud();
 //                            Toast.makeText(getApplicationContext(), "Urządzenie aktywne, połączono", Toast.LENGTH_LONG).show();
@@ -138,13 +167,6 @@ public class BluetoothConnection  extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "No paired devices found", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    private void connectToCloud() throws IOException{
-        UUID uuid = UUID.fromString(EDefaultData.BLUETOOTH_MODULE_UUID.getData()); //Standard SerialPortService ID
-        BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-        mmSocket.connect();
-        mmOutputStream = mmSocket.getOutputStream();
     }
 
     @Override
@@ -185,7 +207,7 @@ public class BluetoothConnection  extends AppCompatActivity {
                 String deviceHardwareAddress = device.getAddress(); // MAC address
 //                adapter.add(deviceName);
                 adapter.notifyDataSetChanged(); // to zobaczyc czy nie trzeba przy parowaniu
-                if (device.getName().equals("HC-06")) {
+                if (device.getName().equals(EDefaultData.BLUETOOTH_DEVICE_NAME.getData())) {
                     //adapter.add(deviceName);
                     Toast.makeText(getApplicationContext(), "znalazłem!", Toast.LENGTH_LONG).show();
                     mBluetoothAdapter.cancelDiscovery();
@@ -202,7 +224,7 @@ public class BluetoothConnection  extends AppCompatActivity {
         unregisterReceiver(mReceiver);
     }
 
-    public void searchForBluetoothDevices(View view){
+    public void searchForBluetoothDevices(){
         // skanuje, żeby znaleźć nowe urzadznia
         // sprawdzic czy bluetooth jest aktywny
         if (!mBluetoothAdapter.isEnabled()) {
@@ -230,20 +252,20 @@ public class BluetoothConnection  extends AppCompatActivity {
         return mBluetoothAdapter;
     }
 
-    private static void sendData(String msg) throws IOException {
-        mmOutputStream.write(msg.getBytes());
-    }
-
-    /**
-     * Sends message with protocol known to cloud code on arduino
-     * @param message
-     * @throws IOException
-     */
-    public static void sendMessage(String message) throws IOException {
-        sendData('#' + message + '>');
-    }
-
-    public static void sendStartRainbow() throws  IOException {
-//        sendMessage();
-    }
+//    private static void sendData(String msg) throws IOException {
+//        mmOutputStream.write(msg.getBytes());
+//    }
+//
+//    /**
+//     * Sends message with protocol known to cloud code on arduino
+//     * @param message
+//     * @throws IOException
+//     */
+//    public static void sendMessage(String message) throws IOException { // zrobić z stx i ext
+//        sendData('#' + message + '>');
+//    }
+//
+//    public static void sendStartRainbow() throws  IOException {
+////        sendMessage();
+//    }
 }

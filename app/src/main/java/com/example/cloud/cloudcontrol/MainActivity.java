@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isTurnedOn = true;
 
+    CloudDevice mCloudDevice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,21 +86,24 @@ public class MainActivity extends AppCompatActivity {
         setFinalHsvCircleRadius();
         hsvCircleImageOnClick();
         onSeekBarChange();
+
+        mCloudDevice = (CloudDevice) getIntent().getSerializableExtra("device"); // do enuma device TODO
+//        mCloudDevice = (CloudDevice) getIntent().getExtras().
     }
 
     @Override
     public void onBackPressed() {
-        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again )
+        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again ) // TODO zmienic zeby mozna było
         // zrobić tak, żeby wywalało bluetooth activity i przechodziło do tego
     }
 
     public void onOnOffClick(View view){
         try {
             if (isTurnedOn) {
-                BluetoothConnection.sendMessage(Colors.BLACK.getColor()); // send color
+                mCloudDevice.sendMessage(Colors.BLACK.getColor()); // send color
                 isTurnedOn = false;
             } else {
-                BluetoothConnection.sendMessage(changeRGBColorTOHex(red, green, blue));
+                mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue));
                 isTurnedOn = true;
             }
         } catch (IOException e){
@@ -137,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         changePreviewEllipseColor();
                         String hexColor = changeRGBColorTOHex(red, green, blue);
                         try {
-                            BluetoothConnection.sendMessage(changeRGBColorTOHex(red, green, blue)); // send color
+                            mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue)); // send color
                             Log.d(hexColor, "hexColor");
                             Log.d(String.valueOf(red), "r");
                             Log.d(String.valueOf(green), "g");
@@ -221,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 changePreviewEllipseColor();
                 String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    BluetoothConnection.sendMessage(hexColor); // send color
+                    mCloudDevice.sendMessage(hexColor); // send color
                     Log.d(hexColor, "hexColor");
                     Log.d(String.valueOf(red), "r");
                     Log.d(String.valueOf(green), "g");
