@@ -86,17 +86,28 @@ public class BluetoothConnection  extends AppCompatActivity {
 
                 CloudDevice cloudDevice = adapter.getItem(position);
                 Toast.makeText(getApplicationContext(), cloudDevice + "", Toast.LENGTH_LONG).show();
-                try {
+//                try {
+//
+//                    cloudDevice.connect(); // czemu tu nie chce połączyć ,a w dodawnaiu parowanych łączyło ? TODO
 //                    cloudDevice.disconnect();
-                    cloudDevice.connect(); // czemu tu nie chce połączyć ,a w dodawnaiu parowanych łączyło ? TODO
-
                     // czemu tak długo ???? TODO moze tak długo robiło tylko sie pokazywało jak sie połaczyło.
                     // zrobić jakąś animację łączenia może.. TODO
+
+
+
+//                    https://stackoverflow.com/questions/19961457/how-to-share-a-socket-class-instance-between-activities-in-android TODO SERVICE
+
+
+
+                // nie bedzie działąc po streamy i sockety nie sa serializowalne
+
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra("device", cloudDevice);
                     startActivity(intent);
                     finish();
+
+                    ////
 
                     // jak sie da transient do zmiennych to przechodzi, ale ignoruje te zmienne, a tak nie chce TODO
 
@@ -104,12 +115,10 @@ public class BluetoothConnection  extends AppCompatActivity {
                     // wysłać jakoś obiekt do mainActivity
                     // zmianic nazwę mainActivity
                     // przejscie do koła koloró i zamkniecie tego activity TODO
-                } catch (IOException ex){
-                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem \n" + ex.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.d("error", ex.toString());
-                } catch (NullPointerException ex){
-                    Log.d("error", ex.toString());
-                }
+//                } catch (IOException ex){
+//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem", Toast.LENGTH_LONG).show();
+//                    Log.d("error", ex.toString());
+//                }
                 // polaczyc i jak sie bedzie dało, to przejsc do aktywnosci z kołem
 
             }

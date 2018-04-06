@@ -11,29 +11,35 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
+ * !-- This is Singleton, because Socket and OutputStream are not serializable, and can't be passed with intent --!
  * Created by Jakub on 05-Apr-18.
  */
+public class CloudDevice implements Serializable{
 
-public class CloudDevice implements Parcelable {
-
-    private boolean isConnected = false;
-
-    private final BluetoothDevice mDevice;
+//    private static final CloudDevice instance = new CloudDevice();
+//
+//    public static CloudDevice getInstance(){
+//        return instance;
+//    }
 
     private final String mName;
     private final String mAddress;
 
+    private boolean isConnected = false;
+
+    private final BluetoothDevice mDevice;
     private BluetoothSocket mSocket;
     private OutputStream mOutputStream;
-
-
-
 
     public CloudDevice(BluetoothDevice device) {
         this.mDevice = device;
         this.mName = device.getName();
         this.mAddress = device.getAddress();
     }
+
+//    public CloudDevice(){
+//
+//    }
 
     /**
      * Connects to device.
@@ -77,7 +83,7 @@ public class CloudDevice implements Parcelable {
         return isConnected;
     }
 
-    public void setConnected(boolean connected) {
+    private void setConnected(boolean connected) {
         isConnected = connected;
     }
 
@@ -89,6 +95,7 @@ public class CloudDevice implements Parcelable {
         return mName;
     }
 
+
     /**
      * Returned value is seen in list of bluetooth devices
      * @return name od device
@@ -98,13 +105,5 @@ public class CloudDevice implements Parcelable {
         return "chmura";
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        // tu jakos wpisac cału obiekt ?? TODO
-    }
 }

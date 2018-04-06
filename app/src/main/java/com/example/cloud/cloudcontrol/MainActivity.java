@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleImageOnClick();
         onSeekBarChange();
 
-        mCloudDevice = (CloudDevice) getIntent().getSerializableExtra("device"); // do enuma device TODO
+
+        mCloudDevice = (CloudDevice) getIntent().getSerializableExtra("device"); // do enuma device TODO // nie działa
 //        mCloudDevice = (CloudDevice) getIntent().getExtras().
     }
 
