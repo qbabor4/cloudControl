@@ -1,7 +1,5 @@
 package com.example.cloud.cloudcontrol;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -10,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,21 +25,22 @@ import java.util.UUID;
 
 /**
  * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
+ * jak tylko 1 urzadzenie, to od razu połącz
+ * dodać navigation drawer i moze toolbar
  */
 public class BluetoothConnection  extends AppCompatActivity {
 
-    final int REQUEST_ENABLE_BT = 1;
+    final int REQUEST_ENABLE_BT = 1; // po co ? TODO
 
-    private static final String deviceBluetoothName = "HC-06";
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
     static OutputStream mmOutputStream = null;
 
     /*LIST OF ARRAY STRINGS WHICH WILL SERVE AS LIST ITEMS */
-    ArrayList<String> listItems = new ArrayList<>();
+    ArrayList<CloudDevice> listItems = new ArrayList<>();
 
-    ArrayAdapter<String> adapter;
+    ArrayAdapter<CloudDevice> adapter;
 
     ListView listView;
 
@@ -56,7 +55,7 @@ public class BluetoothConnection  extends AppCompatActivity {
 //        setListAdapter(adapter);
         setListView();
 
-        mBluetoothAdapter = getBluetoothAdapter();
+        mBluetoothAdapter = getBluetoothAdapter(); // moze nie globalnie, tylko przekazywac
 
         // Register for broadcasts when a device is discovered.
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -99,6 +98,7 @@ public class BluetoothConnection  extends AppCompatActivity {
             // when bluetooth is already enabled
             Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 
+
             if (pairedDevices.size() > 0) {
                 // There are paired devices. Get the name and address of each paired device.
                 for (BluetoothDevice device : pairedDevices) {
@@ -106,28 +106,33 @@ public class BluetoothConnection  extends AppCompatActivity {
                     String deviceHardwareAddress = device.getAddress(); // MAC address
                     //Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
 
-                    if (device.getName().equals(deviceBluetoothName)) { // bedzie zmienione na moją nazwę
-                        adapter.add(deviceName);  // moze sie da dodawac do listy, a nie adaptera TODO
+                    if (device.getName().equals(bluetoothDeviceName)) { // bedzie zmienione na moją nazwę
+                        Log.d("mac", device.getUuids() + " \n" + device.getAddress() + "\n " + device.getBluetoothClass().toString() + "\n" + device.hashCode() + "\n" );
+                        for(ParcelUuid uuid : device.getUuids()){
+                            Log.d("mac", uuid + "\n");
+                        }
+
+                        adapter.add(new CloudDevice(device));  // moze sie da dodawac do listy, a nie adaptera TODO
                         mmDevice = device;
 
                         // tu bedzie nowy obiekt chmury TODO
 
                         //Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
                         // próbuje połączyc z tym ( moze byc zparowane ale nie włączone )
-                        try {
-                            connectToCloud();
-                            Toast.makeText(getApplicationContext(), "Urządzenie aktywne, połączono", Toast.LENGTH_LONG).show();
-                            // changes activity to main
-
-                            Intent mainIntent = new Intent(this, MainActivity.class);
-                            startActivity(mainIntent);
-                            finish();
-
-                        } catch (IOException e){
-                            // bluetooth module in cloud is not on
-                            Toast.makeText(getApplicationContext(), "Urządzenie nieaktywne", Toast.LENGTH_LONG).show();
-                            //e.printStackTrace();
-                        }
+//                        try {
+//                            connectToCloud();
+//                            Toast.makeText(getApplicationContext(), "Urządzenie aktywne, połączono", Toast.LENGTH_LONG).show();
+//                            // changes activity to main
+//
+//                            Intent mainIntent = new Intent(this, MainActivity.class);
+//                            startActivity(mainIntent);
+//                            finish();
+//
+//                        } catch (IOException e){
+//                            // bluetooth module in cloud is not on
+//                            Toast.makeText(getApplicationContext(), "Urządzenie nieaktywne", Toast.LENGTH_LONG).show();
+//                            //e.printStackTrace();
+//                        }
                     }
                 }
             }
@@ -138,7 +143,7 @@ public class BluetoothConnection  extends AppCompatActivity {
     }
 
     private void connectToCloud() throws IOException{
-        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+        UUID uuid = UUID.fromString(bluetoothModuleUUID); //Standard SerialPortService ID
         BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
         mmSocket.connect();
         mmOutputStream = mmSocket.getOutputStream();
