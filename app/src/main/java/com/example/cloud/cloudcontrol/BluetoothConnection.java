@@ -106,11 +106,9 @@ public class BluetoothConnection  extends AppCompatActivity {
                     String deviceHardwareAddress = device.getAddress(); // MAC address
                     //Toast.makeText(getApplicationContext(), deviceName, Toast.LENGTH_LONG).show();
 
-                    if (device.getName().equals(bluetoothDeviceName)) { // bedzie zmienione na moją nazwę
-                        Log.d("mac", device.getUuids() + " \n" + device.getAddress() + "\n " + device.getBluetoothClass().toString() + "\n" + device.hashCode() + "\n" );
-                        for(ParcelUuid uuid : device.getUuids()){
-                            Log.d("mac", uuid + "\n");
-                        }
+                    if (device.getName().equals(EDefaultData.BLUETOOTH_DEVICE_NAME.getData())) { // bedzie zmienione na moją nazwę
+                        Log.d("mac", device.getUuids() + " \n" + device.getAddress() + "\n " + device.getBluetoothClass().toString() + "\n" + device.hashCode() + "\n" + device.getBondState() );
+
 
                         adapter.add(new CloudDevice(device));  // moze sie da dodawac do listy, a nie adaptera TODO
                         mmDevice = device;
@@ -143,7 +141,7 @@ public class BluetoothConnection  extends AppCompatActivity {
     }
 
     private void connectToCloud() throws IOException{
-        UUID uuid = UUID.fromString(bluetoothModuleUUID); //Standard SerialPortService ID
+        UUID uuid = UUID.fromString(EDefaultData.BLUETOOTH_MODULE_UUID.getData()); //Standard SerialPortService ID
         BluetoothSocket mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
         mmSocket.connect();
         mmOutputStream = mmSocket.getOutputStream();
@@ -185,8 +183,8 @@ public class BluetoothConnection  extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 String deviceHardwareAddress = device.getAddress(); // MAC address
-                adapter.add(deviceName);
-                adapter.notifyDataSetChanged();
+//                adapter.add(deviceName);
+                adapter.notifyDataSetChanged(); // to zobaczyc czy nie trzeba przy parowaniu
                 if (device.getName().equals("HC-06")) {
                     //adapter.add(deviceName);
                     Toast.makeText(getApplicationContext(), "znalazłem!", Toast.LENGTH_LONG).show();

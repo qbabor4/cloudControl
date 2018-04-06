@@ -18,8 +18,9 @@ public class CloudDevice {
 
 
     public CloudDevice(BluetoothDevice device){
-        setDevice(device);
-
+        this.device = device;
+        this.name = device.getName();
+        this.address = device.getAddress();
     }
 
     public void connect(){
@@ -40,13 +41,8 @@ public class CloudDevice {
         return device;
     }
 
-    public void setDevice(BluetoothDevice device) {
-        this.device = device;
-    }
-
     public boolean isConnected() {
         return isConnected;
-
     }
 
     public void setConnected(boolean connected) {
