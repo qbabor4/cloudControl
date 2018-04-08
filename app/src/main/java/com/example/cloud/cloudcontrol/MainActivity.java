@@ -32,53 +32,43 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+/** TODO
+    - zrobic z tego bibliotekę i ją importować.
+    - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
+    - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja. Jak to zrobić jak ktoś ma mniejszy ekran?
+    - Bluetooth low Energy
+    - dopisac listenery do xml
+    - disabled na buttonie search jak szuka
+    - okragłe logo (manifest)
+    - zobaczyc jak zrobić ruchomy splash screen
+    - błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
+    - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
+    - jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
+    - jak sie nacisnie "tak" na "czy włączyc bluetooth", to jest czasami "unfortunatelly bluetooth has stoped" (potem jest ok, bo działa)
+    - mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
+    - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
+    - dodać cień do guzików i dodać guziki
+    - zmienic kolor prewiew elipse ( tak jak zmieniłem *0.65 overlay ellipse
+    - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
+ */
 public class MainActivity extends AppCompatActivity {
-    /* TODO
-        - zrobic z tego bibliotekę i ją importować.
-        - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
-        - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja
-        - Bluetooth low Energy
-        - bluetooth discovery
-        - przełączyc z jednego layouta do drugiego
-        - dopisac listenery do xml
-        - disabled na buttonie search jak szuka
-        - dodac activity inaczej https://developer.android.com/training/basics/firstapp/starting-activity.html
-        - zmienic activity intentem
-        - zmiana nazwy tego pliku i xml tu i w manifescie na control_screen
-        - okragłe logo (manifest)
-        - zobaczyc jak zrobić ruchomy splash screen
-        - jak mam kilka startActivityForResult to jak zrobić do nich osobne onActivityResult onActivityResult()?
-        - sprawdzic jak mozna inaczej niż po nazwie zobaczyc czy to moje urządzenie
-        - błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
-        - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
-        - jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
-        - jak sie nacisnie "tak" na "czy włączyc bluetooth", to jest czasami "unfortunatelly bluetooth has stoped" (potem jest ok, bo działa)
-        - mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
-        - zmianic connectToCloud() na takie jak w android bluetooth
-        - zobaczyc jaki jest mac address moich hc-06
-        - jak szuka to animacja ładowania ( obracajace sie kółko )
-        - nie szuaka dobrze urządzeń...
-        - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
-        - za piewszym razem moze pokazywac uzytkownikowi tę chmurę z którą chce sparować , a potem automatycznie
-        - zbyt czarne kołko blackoveraly ( moze zrobic szare albo inaczej zmianiac opacity? (Nie liniowo))
-        - dodać cień do guzików i dodać guziki
-        - zmienic kolor prewiew elipse ( tak jak zmieniłem *0.65 overlay ellipse
-        - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
 
-     */
 
-    public int hue = 0; // 0-360 // po co public?? TODO
-    public double saturation = 0; // 0-1
-    public double value = 1; // 0-1
+    private int hue = 0; // 0-360
+    private double saturation = 0; // 0-1
+    private double value = 1; // 0-1
 
-    public int red = 255; // 0-255
-    public int green = 255; // 0-255
-    public int blue = 255; // 0-255
+    private int red = 255; // 0-255
+    private int green = 255; // 0-255
+    private int blue = 255; // 0-255
 
     private double hsvCircleRadius;
 
-    private boolean isTurnedOn = true;
+    private boolean isTurnedOn = true; // zmienic nazwę na guzika nazwę
 
+    private ConnectionService mConnectionService;
+
+    private CloudDevice mCloudDevice = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,20 +83,19 @@ public class MainActivity extends AppCompatActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
 
-
-//        mCloudDevice = (CloudDevice) getIntent().getExtras().
     }
 
-    @Override
-    public void onBackPressed() {
-        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again ) // TODO zmienic zeby mozna było
-        // zrobić tak, żeby wywalało bluetooth activity i przechodziło do tego
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // don't let user use back button because when he does and brings app back it goes to bluetooth connecting ( cloud is already paired and can't par again ) // TODO zmienic zeby mozna było
+//        // zrobić tak, żeby wywalało bluetooth activity i przechodziło do tego
+//    }
 
     public void onOnOffClick(View view){
+        // zrobić listener tutaj a nie w xml TODO
         try {
             if (isTurnedOn) {
-                mCloudDevice.sendMessage(Colors.BLACK.getColor()); // send color
+                mCloudDevice.sendMessage(Colors.BLACK.getColor());
                 isTurnedOn = false;
             } else {
                 mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue));
@@ -118,12 +107,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ConnectionService mConnectionService;
-    private boolean mBound = false;
-
-    private CloudDevice mCloudDevice = null;
-
-    // dostac sie do połączonego cloudDevice TODO
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -132,28 +115,25 @@ public class MainActivity extends AppCompatActivity {
             ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
             mConnectionService = binder.getService();
             Log.d("lol12", "lol444444");
-            mBound = true;
             mCloudDevice = mConnectionService.getConnectedCloudDevice();
             Log.d("lol123", mConnectionService.getConnectedCloudDevice() + "");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mBound = false;
+
         }
     };
 
 
-
     private void setFinalHsvCircleRadius(){
-        final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage);
+        final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage); // globalnie jakoś TODO
         ViewTreeObserver vto = hsvCircleImgView.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 hsvCircleImgView.getViewTreeObserver().removeOnPreDrawListener(this);
                 hsvCircleRadius = hsvCircleImgView.getMeasuredWidth() / 2;
-
                 return true;
             }
         });
@@ -223,20 +203,12 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleBlackOverlay.setAlpha(imageAlpha);
     }
 
-    //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0)
-    private String changeRGBColorTOHex(int red, int green, int blue){ // poprawić TODO
-
-        String hexR = decToHex(red);
-        Log.d("hexR", hexR );
-        String hexG = decToHex(green);
-        Log.d("hexG", hexG );
-        String hexB = decToHex(blue);
-        Log.d("hexB", hexB );
-
-        return hexR+ hexG + hexB;
+    //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0) // zobaczyc czy tak robi faktycznie
+    private String changeRGBColorTOHex(int red, int green, int blue){
+        return decToHex(red) + decToHex(green) + decToHex(blue);
     }
 
-    private String decToHex(int decColor){ // dać mu zero
+    private String decToHex(int decColor){
         String hexColor = "";
         char hexArray[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
@@ -248,23 +220,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onSeekBarChange(){
-        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1);
+        final SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar1); // TODO globalnie
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 changeHsvCircleBlackOverlaysAlpha(progress);
-                value = progress /100.;
+                value = progress /100.; // tu dać seter TODO
                 setRgbVariables();
                 changePreviewEllipseColor();
-                String hexColor = changeRGBColorTOHex(red, green, blue);
                 try {
-                    mCloudDevice.sendMessage(hexColor); // send color
-                    Log.d(hexColor, "hexColor");
-                    Log.d(String.valueOf(red), "r");
-                    Log.d(String.valueOf(green), "g");
-                    Log.d(String.valueOf(blue), "b");
+                    mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue));
+
                 } catch (IOException e){
-                    Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Sending Error", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -278,5 +246,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mConnection); // może być problem jak sie bedzie przechodziło do innych activity 
     }
 }
