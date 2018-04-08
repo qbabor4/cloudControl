@@ -5,9 +5,12 @@ import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.menu.ExpandedMenuView;
@@ -76,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isTurnedOn = true;
 
-    CloudDevice mCloudDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +89,11 @@ public class MainActivity extends AppCompatActivity {
         hsvCircleImageOnClick();
         onSeekBarChange();
 
+        Intent intent = new Intent(this, ConnectionService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        mCloudDevice = (CloudDevice) getIntent().getSerializableExtra("device"); // do enuma device TODO // nie działa
+
+
 //        mCloudDevice = (CloudDevice) getIntent().getExtras().
     }
 
@@ -112,6 +117,32 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private ConnectionService mConnectionService;
+    private boolean mBound = false;
+
+    private CloudDevice mCloudDevice = null;
+
+    // dostac sie do połączonego cloudDevice TODO
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            /* We've bound to LocalService, cast the IBinder and get LocalService instance */
+            ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
+            mConnectionService = binder.getService();
+            Log.d("lol12", "lol444444");
+            mBound = true;
+            mCloudDevice = mConnectionService.getConnectedCloudDevice();
+            Log.d("lol123", mConnectionService.getConnectedCloudDevice() + "");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
 
 
     private void setFinalHsvCircleRadius(){

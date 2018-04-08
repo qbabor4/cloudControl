@@ -29,6 +29,11 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".ConnectionService"
+            android:exported="false"/>
+
+
     </application>
 
 </manifest>

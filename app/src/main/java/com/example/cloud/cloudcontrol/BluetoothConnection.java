@@ -4,10 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,11 +31,15 @@ import java.util.UUID;
  * jak tylko 1 urzadzenie, to od razu połącz
  * dodać navigation drawer i moze toolbar
  * zrobic 2 urzadzenie i sprobowac laczys sie tylko z 1 a nie z 2
+ * zmianic nazwę mainActivity
+ * zrobić jakąś animację łączenia może.. TODO
  */
 public class BluetoothConnection  extends AppCompatActivity {
 
     final int REQUEST_ENABLE_BT = 1; // po co ? TODO
 
+    private ConnectionService mConnectionService;
+    private boolean mBound = false;
 
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mmDevice = null;
@@ -73,7 +80,27 @@ public class BluetoothConnection  extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Inny Błąd", Toast.LENGTH_LONG).show();
         }
 
+        /* Bind to ConnectionService */
+        Intent intent = new Intent(this, ConnectionService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        Log.d("lol12", "bind " + mBound);
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            /* We've bound to LocalService, cast the IBinder and get LocalService instance */
+            ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
+            mConnectionService = binder.getService();
+            Log.d("lol12", "lol");
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
 
     private void setListView(){
         listView = (ListView) findViewById(R.id.listView_devices);
@@ -86,41 +113,20 @@ public class BluetoothConnection  extends AppCompatActivity {
 
                 CloudDevice cloudDevice = adapter.getItem(position);
                 Toast.makeText(getApplicationContext(), cloudDevice + "", Toast.LENGTH_LONG).show();
-//                try {
-//
-//                    cloudDevice.connect(); // czemu tu nie chce połączyć ,a w dodawnaiu parowanych łączyło ? TODO
-//                    cloudDevice.disconnect();
-                    // czemu tak długo ???? TODO moze tak długo robiło tylko sie pokazywało jak sie połaczyło.
-                    // zrobić jakąś animację łączenia może.. TODO
 
+                Log.d("lol12", mConnectionService.getRandomNumber() + " " + mBound);
 
-
-//                    https://stackoverflow.com/questions/19961457/how-to-share-a-socket-class-instance-between-activities-in-android TODO SERVICE
-
-
-
-                // nie bedzie działąc po streamy i sockety nie sa serializowalne
-
+                try{
+                    mConnectionService.connectDevice(cloudDevice);
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.putExtra("device", cloudDevice);
                     startActivity(intent);
                     finish();
 
-                    ////
-
-                    // jak sie da transient do zmiennych to przechodzi, ale ignoruje te zmienne, a tak nie chce TODO
-
-
-                    // wysłać jakoś obiekt do mainActivity
-                    // zmianic nazwę mainActivity
-                    // przejscie do koła koloró i zamkniecie tego activity TODO
-//                } catch (IOException ex){
-//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem", Toast.LENGTH_LONG).show();
-//                    Log.d("error", ex.toString());
-//                }
-                // polaczyc i jak sie bedzie dało, to przejsc do aktywnosci z kołem
-
+                } catch (IOException ex){
+                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem", Toast.LENGTH_LONG).show();
+                    Log.d("error", ex.toString());
+                }
             }
         });
     }
@@ -152,6 +158,8 @@ public class BluetoothConnection  extends AppCompatActivity {
 
                         adapter.add(new CloudDevice(device));  // moze sie da dodawac do listy, a nie adaptera TODO
 //                        mmDevice = device;
+
+                        // zapisac cos tutaj w service i odczytac w kole hsv TODO
 
                         //Toast.makeText(getApplicationContext(), "Device found!!!", Toast.LENGTH_LONG).show();
                         // próbuje połączyc z tym ( moze byc sparowane ale nie włączone )
@@ -228,7 +236,8 @@ public class BluetoothConnection  extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+//        unbindService(mConnection); // to chyba nie ... TODO
+//        mBound = false;
         // unregister the ACTION_FOUND receiver.
         unregisterReceiver(mReceiver);
     }
