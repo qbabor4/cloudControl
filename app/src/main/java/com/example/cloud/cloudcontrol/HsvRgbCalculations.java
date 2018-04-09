@@ -25,6 +25,22 @@ class HsvRgbCalculations {
         return (int)angle;
     }
 
+    private static String decToHex(int decColor) {
+        String hexColor = "";
+        char hexArray[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+        hexColor += hexArray[decColor % 16];
+        decColor = decColor / 16;
+        hexColor = hexArray[decColor % 16] + hexColor;
+
+        return hexColor;
+    }
+
+    //changes rgb values to hex string, with addition of zeros, when there is only 1 char per one of 3 colors f.e. #ffaff (one a, not a0) // zobaczyc czy tak robi faktycznie
+    public static String changeRGBColorTOHex(int red, int green, int blue) {
+        return HsvRgbCalculations.decToHex(red) + HsvRgbCalculations.decToHex(green) + HsvRgbCalculations.decToHex(blue);
+    }
+
     /// Convert HSV to RGB
     /// h is from 0-360
     /// s,v values are 0-1

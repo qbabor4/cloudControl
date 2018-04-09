@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
+ * TODO:
  * jak tylko 1 urzadzenie, to od razu połącz
  * dodać navigation drawer i moze toolbar
  * zrobic 2 urzadzenie i sprobowac laczys sie tylko z 1 a nie z 2
@@ -61,7 +61,7 @@ public class BluetoothConnection  extends AppCompatActivity {
             addPairedDevicesToList(); // looks for paired devices // TODO niech zwraca listę może
         } catch (IOException e){
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Błąd IOException", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Błąd IOException przy szukaniu sparowanych urządzen", Toast.LENGTH_LONG).show();
         }
 
         /* Bind to ConnectionService */
