@@ -58,7 +58,7 @@ public class CloudControll extends AppCompatActivity {
 
     private CloudDevice mCloudDevice = null;
 
-    private ImageButton btnOnOff;
+    private ImageButton btnOnOff, btnRainbow;
     private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay;
     private SeekBar sbValueOfHSV;
 
@@ -91,6 +91,7 @@ public class CloudControll extends AppCompatActivity {
 
     private void initComponents() {
         setBtnOnOff();
+        setBtnRainbow();
         setIvHSVCircle();
         setPickedColorPreviewEllipse();
         setIvHSVCircleBlackOverlay();
@@ -103,12 +104,12 @@ public class CloudControll extends AppCompatActivity {
         btnOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onOnOffClick(v);
+                onBtnOnOffClick(v);
             }
         });
     }
 
-    public void onOnOffClick(View view) {
+    public void onBtnOnOffClick(View view) { // zmiana image na wyłączony TODO
         try {
             if (mIsBtnOnOffTurnedOn) {
                 mCloudDevice.sendColor(Colors.BLACK.getColor());
@@ -119,6 +120,25 @@ public class CloudControll extends AppCompatActivity {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setBtnRainbow(){
+        btnRainbow = (ImageButton) findViewById(R.id.btn_rainbow);
+        btnRainbow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBtnRainbowClick(v);
+            }
+        });
+    }
+
+    private void onBtnRainbowClick(View v){
+        try{
+            mCloudDevice.sendRainbow();
+        }catch (IOException ex){
+            ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
     }

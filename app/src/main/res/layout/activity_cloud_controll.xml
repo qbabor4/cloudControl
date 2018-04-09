@@ -66,5 +66,16 @@
         android:scaleType="fitXY"
         app:srcCompat="@drawable/button_noshadow_cut_01" />
 
+    <ImageButton
+        android:id="@+id/btn_rainbow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_on_off"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/btn_on_off"
+        android:layout_toRightOf="@+id/btn_on_off"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/button_noshadow_03" />
+
 
 </RelativeLayout>

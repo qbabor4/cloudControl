@@ -2,8 +2,6 @@ package com.example.cloud.cloudcontrol;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,10 +35,6 @@ public class CloudDevice implements Serializable{
         this.mAddress = device.getAddress();
     }
 
-//    public CloudDevice(){
-//
-//    }
-
     /**
      * Connects to device.
      * Sets socket and gets outputStream.
@@ -70,20 +64,22 @@ public class CloudDevice implements Serializable{
         mOutputStream.write(msg.getBytes());
     }
 
-
-
     /**
-     * Sends color with correct protocol frame
+     * Sends color command to device
+     * @throws IOException
      */
     public void sendColor(String color) throws IOException {
-//        send('<' + msg + '>');
-        send('<' + "col" + '#' + color + '>' );
-        // wysłać z STX EXT
-        // dac do enuma z protokołem TODO
-
+        send(ProtocolMessages.getColorFrame(color));
     }
 
-    // wiecej funkcji zwracajacych protoków, kolorm raibow itd ... TODO
+    /**
+     * Sends rainbow command to device
+     * @throws IOException
+     */
+    public void sendRainbow() throws IOException { // z brightness i czy wszystkie takie same TODO
+        send(ProtocolMessages.getRainbowFrame());
+    }
+
 
     /* Getters and setters */
 
