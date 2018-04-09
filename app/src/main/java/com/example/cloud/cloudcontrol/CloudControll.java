@@ -39,6 +39,7 @@ import java.io.IOException;
  * - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
  * zobaczyc czy wysyła jak sie kliknie na białe pole na zdjęciu
  * wraca do bluetootha jak sie wróci klawiszem wracającym i przywróci
+ * jak tylko dotknę to nie zmienia sie kolor i chyba nie wysyła
  */
 public class CloudControll extends AppCompatActivity {
 
@@ -110,10 +111,10 @@ public class CloudControll extends AppCompatActivity {
     public void onOnOffClick(View view) {
         try {
             if (mIsBtnOnOffTurnedOn) {
-                mCloudDevice.sendMessage(Colors.BLACK.getColor());
+                mCloudDevice.sendColor(Colors.BLACK.getColor());
                 mIsBtnOnOffTurnedOn = false;
             } else {
-                mCloudDevice.sendMessage(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 mIsBtnOnOffTurnedOn = true;
             }
         } catch (IOException e) {
@@ -141,7 +142,7 @@ public class CloudControll extends AppCompatActivity {
             {
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendMessage(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); // send color
+                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); // send color
                 } catch (IOException e) {
                     Toast.makeText(getApplicationContext(), "Not Sent", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
@@ -226,7 +227,7 @@ public class CloudControll extends AppCompatActivity {
                 setRgbVariables();
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendMessage(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 } catch (IOException e) {
                     Toast.makeText(getApplicationContext(), "Sending Error", Toast.LENGTH_SHORT).show();
                 }

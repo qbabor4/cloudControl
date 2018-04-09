@@ -70,12 +70,20 @@ public class CloudDevice implements Serializable{
         mOutputStream.write(msg.getBytes());
     }
 
+
+
     /**
-     * Sends message with correct protocol frame
+     * Sends color with correct protocol frame
      */
-    public void sendMessage(String msg) throws IOException {
-        send('#' + msg + '>');
+    public void sendColor(String color) throws IOException {
+//        send('<' + msg + '>');
+        send('<' + "col" + '#' + color + '>' );
+        // wysłać z STX EXT
+        // dac do enuma z protokołem TODO
+
     }
+
+    // wiecej funkcji zwracajacych protoków, kolorm raibow itd ... TODO
 
     /* Getters and setters */
 
