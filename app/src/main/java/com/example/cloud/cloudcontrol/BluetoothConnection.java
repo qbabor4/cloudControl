@@ -2,7 +2,6 @@ package com.example.cloud.cloudcontrol;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.ParcelUuid;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,10 +19,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * TODO: zrobić nie statyczne wysyłanie, tylko z tworzeniem obietku
@@ -78,7 +74,7 @@ public class BluetoothConnection  extends AppCompatActivity {
      * Register for broadcasts when a device is discovered.
      */
     private void registerBluetoothReceiver(){
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND); // zobaczyc czy tzeba TODO
         registerReceiver(mReceiver, filter);
     }
 
@@ -114,7 +110,7 @@ public class BluetoothConnection  extends AppCompatActivity {
     }
 
     private void goToDeviceControllActivity(){
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), CloudControll.class);
         startActivity(intent);
         finish();
     }

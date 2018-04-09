@@ -1,10 +1,5 @@
 package com.example.cloud.cloudcontrol;
 
-import android.annotation.SuppressLint;
-import android.app.ListActivity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,24 +8,15 @@ import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.menu.ExpandedMenuView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
 
 /** TODO
     - zrobic z tego bibliotekę i ją importować.
@@ -50,40 +36,54 @@ import java.util.UUID;
     - dodać cień do guzików i dodać guziki
     - zmienic kolor prewiew elipse ( tak jak zmieniłem *0.65 overlay ellipse
     - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
+ * zobaczyc czy wysyła jak sie kliknie na białe pole na zdjęciu
+ * wraca do bluetootha jak sie wróci klawiszem wracającym i przywróci
  */
-public class MainActivity extends AppCompatActivity {
+public class CloudControll extends AppCompatActivity {
 
 
-    private int hue = 0; // 0-360
-    private double saturation = 0; // 0-1
-    private double value = 1; // 0-1
+    private int mHue = 0; // 0-360
+    private double mSaturation = 0; // 0-1
+    private double mValue = 1; // 0-1
 
-    private int red = 255; // 0-255
-    private int green = 255; // 0-255
-    private int blue = 255; // 0-255
+    private int mRed = 255; // 0-255
+    private int mGreen = 255; // 0-255
+    private int mBlue = 255; // 0-255
 
-    private double hsvCircleRadius;
+    private double mHSVCircleRadius;
 
-    private boolean isTurnedOn = true; // zmienic nazwę na guzika nazwę
-
-    private ConnectionService mConnectionService;
+    private boolean mIsBtnOnOffTurnedOn = true;
 
     private CloudDevice mCloudDevice = null;
+
+    ImageButton btnOnOff;
+    ImageView ivHSVCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_cloud_controll);
+
+        initCloudDeviceService();
+        initComponents();
+
 
         setFinalHsvCircleRadius();
-        hsvCircleImageOnClick();
-        onSeekBarChange();
-
-        Intent intent = new Intent(this, ConnectionService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
+        onSeekBarChange(); // to do initComponent
 
     }
+
+    private void initComponents(){
+        setBtnOnOff();
+        setIvHSVCircle();
+    }
+
+    private void initCloudDeviceService(){
+        Intent intent = new Intent(this, ConnectionService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+
 
 //    @Override
 //    public void onBackPressed() {
@@ -91,20 +91,57 @@ public class MainActivity extends AppCompatActivity {
 //        // zrobić tak, żeby wywalało bluetooth activity i przechodziło do tego
 //    }
 
+    private void setBtnOnOff(){
+        btnOnOff = (ImageButton) findViewById(R.id.btnOnOff);
+        btnOnOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOnOffClick(v);
+            }
+        });
+    }
+
     public void onOnOffClick(View view){
-        // zrobić listener tutaj a nie w xml TODO
         try {
-            if (isTurnedOn) {
+            if (mIsBtnOnOffTurnedOn) {
                 mCloudDevice.sendMessage(Colors.BLACK.getColor());
-                isTurnedOn = false;
+                mIsBtnOnOffTurnedOn = false;
             } else {
-                mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue));
-                isTurnedOn = true;
+                mCloudDevice.sendMessage(changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mIsBtnOnOffTurnedOn = true;
             }
         } catch (IOException e){
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Not Send", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setIvHSVCircle() {
+        ivHSVCircle = (ImageView) findViewById(R.id.hsvCircleImage);
+        ivHSVCircle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return ivHSVCircleOnTouchListener(v, event);
+            }
+        });
+    }
+
+    private boolean ivHSVCircleOnTouchListener(View v, MotionEvent event){
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            setRgbVariables(x, y);
+            changePreviewEllipseColor();
+            try {
+                mCloudDevice.sendMessage(changeRGBColorTOHex(mRed, mGreen, mBlue)); // send color
+            } catch (IOException e){
+                Toast.makeText(getApplicationContext(), "Not Sent", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
 
@@ -112,11 +149,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             /* We've bound to LocalService, cast the IBinder and get LocalService instance */
-            ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
-            mConnectionService = binder.getService();
-            Log.d("lol12", "lol444444");
-            mCloudDevice = mConnectionService.getConnectedCloudDevice();
-            Log.d("lol123", mConnectionService.getConnectedCloudDevice() + "");
+            mCloudDevice = ((ConnectionService.LocalBinder) service).getService().getConnectedCloudDevice();
         }
 
         @Override
@@ -126,75 +159,53 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
+    /**
+     * Sets HSVCircle radius. Creates ViewTreeObserver to get width od image with HSV Circle.
+     */
     private void setFinalHsvCircleRadius(){
-        final ImageView hsvCircleImgView = (ImageView) findViewById(R.id.hsvCircleImage); // globalnie jakoś TODO
-        ViewTreeObserver vto = hsvCircleImgView.getViewTreeObserver();
+        final ViewTreeObserver vto = ivHSVCircle.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                hsvCircleImgView.getViewTreeObserver().removeOnPreDrawListener(this);
-                hsvCircleRadius = hsvCircleImgView.getMeasuredWidth() / 2;
+                mHSVCircleRadius = ivHSVCircle.getMeasuredWidth() / 2;
+                ivHSVCircle.getViewTreeObserver().removeOnPreDrawListener(this);
                 return true;
             }
         });
     }
 
-    private void hsvCircleImageOnClick(){
-        final ImageView hsvCircleImg =  (ImageView) findViewById(R.id.hsvCircleImage);
-        hsvCircleImg.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                int hsvCircleHeight = (int)hsvCircleRadius * 2; // same as Width
-
-                if ( x > 0 && y > 0 && x < hsvCircleHeight && y < hsvCircleHeight) {
-                    if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                        setRgbVariables(x, y);
-                        changePreviewEllipseColor();
-                        String hexColor = changeRGBColorTOHex(red, green, blue);
-                        try {
-                            mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue)); // send color
-                            Log.d(hexColor, "hexColor");
-                            Log.d(String.valueOf(red), "r");
-                            Log.d(String.valueOf(green), "g");
-                            Log.d(String.valueOf(blue), "b");
-                        } catch (IOException e){
-                            Toast.makeText(getApplicationContext(), "Not Sent", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
-    private void setRgbVariables(int x, int y){
-        double distanceFromCenter = HsvRgbCalculations.getDistanceFromCenter(x, y, hsvCircleRadius);
-        double saturation = HsvRgbCalculations.getSaturation( distanceFromCenter, hsvCircleRadius );
+    /**
+     * Sets RGB variables if touch coordinates were on HSV Circle.
+     * @param x x value of touch on HSV Circle Image
+     * @param y y value of touch on HSV Circle Image
+     * @return true if variables were set - if x and y are contained in HSV Circle (without corner spaces) false if not
+     */
+    private boolean setRgbVariables(int x, int y){
+        double saturation = HsvRgbCalculations.getSaturation( HsvRgbCalculations.getDistanceFromCenter(x, y, mHSVCircleRadius), mHSVCircleRadius);
         if (saturation <= 1) {
-            this.saturation = saturation;
-            this.hue = HsvRgbCalculations.getHue(x, y, hsvCircleRadius);
-            int rgbColors[] = HsvRgbCalculations.hsvToRgb( this.hue, this.saturation, this.value);
-            this.red = rgbColors[0];
-            this.green = rgbColors[1];
-            this.blue = rgbColors[2];
+            mSaturation = saturation;
+            mHue = HsvRgbCalculations.getHue(x, y, mHSVCircleRadius);
+            int rgbColors[] = HsvRgbCalculations.hsvToRgb( mHue, mSaturation, mValue);
+            mRed = rgbColors[0];
+            mGreen = rgbColors[1];
+            mBlue = rgbColors[2];
+            return true;
         }
+        return false;
     }
 
     private void setRgbVariables(){
-        if (saturation <= 1) {
-            int rgbColors[] = HsvRgbCalculations.hsvToRgb( hue, saturation, value);
-            this.red = rgbColors[0];
-            this.green = rgbColors[1];
-            this.blue = rgbColors[2];
+        if (mSaturation <= 1) {
+            int rgbColors[] = HsvRgbCalculations.hsvToRgb(mHue, mSaturation, mValue);
+            this.mRed = rgbColors[0];
+            this.mGreen = rgbColors[1];
+            this.mBlue = rgbColors[2];
         }
     }
 
     private void changePreviewEllipseColor(){
-        ImageView previewEllipse = (ImageView)findViewById(R.id.prewiew_ellipse); // to może globalnie ?? TODO
-        previewEllipse.setColorFilter(Color.rgb(red, green, blue));
+        ImageView previewEllipse = (ImageView)findViewById(R.id.picked_color_prewiew_ellipse); // to może globalnie ?? TODO
+        previewEllipse.setColorFilter(Color.rgb(mRed, mGreen, mBlue));
     }
 
     private void changeHsvCircleBlackOverlaysAlpha(int progress){
@@ -225,11 +236,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 changeHsvCircleBlackOverlaysAlpha(progress);
-                value = progress /100.; // tu dać seter TODO
+                mValue = progress /100.; // tu dać seter TODO
                 setRgbVariables();
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendMessage(changeRGBColorTOHex(red, green, blue));
+                    mCloudDevice.sendMessage(changeRGBColorTOHex(mRed, mGreen, mBlue));
 
                 } catch (IOException e){
                     Toast.makeText(getApplicationContext(), "Sending Error", Toast.LENGTH_SHORT).show();
