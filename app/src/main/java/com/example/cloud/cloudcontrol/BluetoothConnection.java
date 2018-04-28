@@ -30,6 +30,7 @@ import java.util.Set;
  * zmianic nazwę mainActivity
  * zrobić jakąś animację łączenia może.. TODO
  * za piewszym razem moze pokazywac uzytkownikowi tę chmurę z którą chce sparować , a potem automatycznie
+ * ma szukac przy guziku 
  */
 public class BluetoothConnection  extends AppCompatActivity {
 
@@ -57,12 +58,8 @@ public class BluetoothConnection  extends AppCompatActivity {
 
         registerBluetoothReceiver();
 
-        try {
-            addPairedDevicesToList(); // looks for paired devices // TODO niech zwraca listę może
-        } catch (IOException e){
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Błąd IOException przy szukaniu sparowanych urządzen", Toast.LENGTH_LONG).show();
-        }
+        addPairedDevicesToList(); // looks for paired devices // TODO niech zwraca listę może
+
 
         /* Bind to ConnectionService */
         Intent intent = new Intent(this, ConnectionService.class);
@@ -74,7 +71,7 @@ public class BluetoothConnection  extends AppCompatActivity {
      * Register for broadcasts when a device is discovered.
      */
     private void registerBluetoothReceiver(){
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND); // zobaczyc czy tzeba TODO
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND); // zobaczyc czy tzeba bo nie bede nic odbierał TODO
         registerReceiver(mReceiver, filter);
     }
 
@@ -115,7 +112,7 @@ public class BluetoothConnection  extends AppCompatActivity {
         finish();
     }
 
-    private void addPairedDevicesToList() throws IOException {
+    private void addPairedDevicesToList(){
 
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -148,17 +145,12 @@ public class BluetoothConnection  extends AppCompatActivity {
             /* Make sure the request was successful */
             if(resultCode != RESULT_CANCELED){
                 Toast.makeText(getApplicationContext(), "Yes"+ resultCode, Toast.LENGTH_LONG).show();
-                // szuakać paired devices, a jak nie połączy z chmurą, to szukać aktywnych TODO
+                addPairedDevicesToList();
             }
-            else { // 0
-                Toast.makeText(getApplicationContext(), "canceled" + resultCode, Toast.LENGTH_LONG).show();
-                // Do nothing
+            else {
+                /* user didn't enable bluetooth */
             }
         }
-    }
-
-    private void searchForPairedDevices(){
-
     }
 
     // nie wiem po co to TODO
@@ -195,22 +187,6 @@ public class BluetoothConnection  extends AppCompatActivity {
         unregisterReceiver(mReceiver); // zobaczyc co to robi TODO
     }
 
-    public void searchForBluetoothDevices(){
-        // skanuje, żeby znaleźć nowe urzadznia
-        // sprawdzic czy bluetooth jest aktywny
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetoothIntent, REQUEST_ENABLE_BT); // tu moze inny kod requesta ( inny int np. 2) i to potem sprawdzac w onActivityResult
-            // zobaczyc czy aktywował bluetooth
-            // jak tak to skanuje zeby znależć nowe urządzenia
-        } else {
-            Toast.makeText(getApplicationContext(), "Szukam nowych urządzeń", Toast.LENGTH_LONG).show();
-            if (mBluetoothAdapter.isDiscovering()) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
-            mBluetoothAdapter.startDiscovery();
-        }
-    }
 
     private BluetoothAdapter getBluetoothAdapter(){
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

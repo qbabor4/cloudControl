@@ -40,6 +40,13 @@ import java.io.IOException;
  * zobaczyc czy wysyła jak sie kliknie na białe pole na zdjęciu
  * wraca do bluetootha jak sie wróci klawiszem wracającym i przywróci
  * jak tylko dotknę to nie zmienia sie kolor i chyba nie wysyła
+ * jak sie klika na rainbow i onOFF to sie pokazuje ostatni kolor a nie gasi (przy klikaniu na rainbow trzeba ustawić jako ON chyba
+ * setowac w obiekcie mHSVCircleRadius, zeby nie podawac cały czas
+ * komunikat jak nic nie znajdzie, żeby sparował
+ * Jak sie nie połączyc, to żeby podszedł bliżej
+ * jak kliknałem najpierw on / off to potem nie reagował... (moze to przez serial print)
+ * jak sie wybierze kolor na kole, to ma sie odznaczyc przycisk wylaczenia
+ * na suwaku ma patrzec czy jest raibow, czy nie
  */
 public class CloudControll extends AppCompatActivity {
 
@@ -55,10 +62,12 @@ public class CloudControll extends AppCompatActivity {
     private double mHSVCircleRadius;
 
     private boolean mIsBtnOnOffTurnedOn = true;
+    private boolean mIsBtnRainbowTurnedOn = false;
+    private boolean mIsBtnAllColorsChangingTurnedOn = false;
 
     private CloudDevice mCloudDevice = null;
 
-    private ImageButton btnOnOff, btnRainbow;
+    private ImageButton btnOnOff, btnRainbow, btnAllColorsChanging;
     private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay;
     private SeekBar sbValueOfHSV;
 
@@ -113,15 +122,21 @@ public class CloudControll extends AppCompatActivity {
         try {
             if (mIsBtnOnOffTurnedOn) {
                 mCloudDevice.sendColor(Colors.BLACK.getColor());
-                mIsBtnOnOffTurnedOn = false;
+//                btnOnOff.setImageResource(R.drawable.button_01_pressed);
             } else {
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
-                mIsBtnOnOffTurnedOn = true;
+                btnOnOff.setImageResource(R.drawable.button_01);
             }
+            mIsBtnOnOffTurnedOn = !mIsBtnOnOffTurnedOn;
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setOtherButtonsOff(ImageButton pressedButton){
+        // odznaczac pozostałe jak kliknie pressedButton TODO
+        //zmienne i zdjecia
     }
 
     private void setBtnRainbow(){
@@ -136,11 +151,39 @@ public class CloudControll extends AppCompatActivity {
 
     private void onBtnRainbowClick(View v){
         try{
-            mCloudDevice.sendRainbow();
+            if (!mIsBtnRainbowTurnedOn) {
+                mCloudDevice.sendRainbow();
+                btnRainbow.setImageResource(R.drawable.button_03_pressed);
+            } else {
+                /* go back to previous color */
+                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                btnRainbow.setImageResource(R.drawable.button_03);
+            }
+            mIsBtnRainbowTurnedOn = !mIsBtnRainbowTurnedOn;
         }catch (IOException ex){
             ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setBtnAllColorsChanging(){
+        btnAllColorsChanging = (ImageButton) findViewById(R.id.btn_all_colors_changing);
+        btnAllColorsChanging.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnBtnAllColorsChangingClick(v);
+            }
+        });
+    }
+
+    private void OnBtnAllColorsChangingClick(View v){
+        if(!mIsBtnAllColorsChangingTurnedOn){
+            // wyslij polecenie ze zmianą
+            btnAllColorsChanging.setImageResource(R.drawable.button_02_pressed);
+        } else {
+            btnAllColorsChanging.setImageResource(R.drawable.button_02);
+        }
+        mIsBtnAllColorsChangingTurnedOn = !mIsBtnAllColorsChangingTurnedOn;
     }
 
     private void setIvHSVCircle() {

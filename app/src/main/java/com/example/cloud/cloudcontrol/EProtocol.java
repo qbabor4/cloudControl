@@ -9,7 +9,10 @@ public enum EProtocol {
     END('>'),
     SEPARATOR('#'),
     COLOR("col"),
-    RAINBOW("rbw");
+    RAINBOW("rbw"),
+    BRIGHTNESS("brg"),
+    ALL_THE_SAME("ats");
+
 
     private char protocolChar;
     private String protocolStr;

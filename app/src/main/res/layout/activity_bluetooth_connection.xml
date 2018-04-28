@@ -28,5 +28,5 @@
         android:layout_height="0dp"
         android:layout_weight="0.50"
         android:onClick="searchForBluetoothDevices"
-        android:text="SEARCH" />
+        android:text="ODŚWIEŻ SPAROWANE URZĄDZENIA" />
 </LinearLayout>

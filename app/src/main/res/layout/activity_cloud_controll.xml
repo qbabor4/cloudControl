@@ -1,81 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    tools:context="com.example.cloud.cloudcontrol.CloudControll">
+    android:orientation="vertical"
+    android:layout_margin="10dp">
 
-    <ImageView
-        android:id="@+id/HSV_circle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_on_off"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/hsvCircleDescription"
-        app:srcCompat="@drawable/hsv_circle_fit" />
+        android:layout_weight="1">
 
-    <SeekBar
-        android:id="@+id/value_of_HSV"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_alignEnd="@+id/HSV_circle"
-        android:layout_alignLeft="@+id/HSV_circle"
-        android:layout_alignRight="@+id/HSV_circle"
-        android:layout_alignStart="@+id/HSV_circle"
-        android:layout_below="@+id/HSV_circle"
-        android:layout_marginTop="14dp"
-        android:max="@integer/maxSliderValue"
-        android:progress="@integer/sliderProgress"
-        android:visibility="visible" />
+        <ImageButton
+            android:id="@+id/btn_on_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/button_01" />
 
-    <ImageView
-        android:id="@+id/HSV_circle_black_overlay"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_above="@+id/value_of_HSV"
-        android:layout_alignEnd="@+id/HSV_circle"
-        android:layout_alignLeft="@+id/HSV_circle"
-        android:layout_alignRight="@+id/HSV_circle"
-        android:layout_alignStart="@+id/HSV_circle"
-        android:layout_alignTop="@+id/HSV_circle"
-        android:alpha="0.0"
-        android:contentDescription="@string/hsvCircleBlackOverlayDescription"
-        android:src="@drawable/overlay_ellipse" />
+        <ImageButton
+            android:id="@+id/btn_all_colors_changing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/button_02" />
 
-    <ImageView
-        android:id="@+id/picked_color_preview_ellipse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/HSV_circle"
-        android:layout_alignStart="@+id/HSV_circle"
-        android:layout_alignTop="@+id/HSV_circle"
-        android:contentDescription="@string/previewEllipseDescription"
-        android:src="@drawable/preview_ellipse" />
+        <ImageButton
+            android:id="@+id/btn_rainbow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/button_03" />
 
-    <ImageButton
-        android:id="@+id/btn_on_off"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/HSV_circle"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/HSV_circle"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/button_shadow"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/button_noshadow_cut_01" />
+    </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btn_rainbow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btn_on_off"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/btn_on_off"
-        android:layout_toRightOf="@+id/btn_on_off"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/button_noshadow_03" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/HSV_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/hsvCircleDescription"
+            app:srcCompat="@drawable/hsv_circle_fit" />
+
+        <SeekBar
+            android:id="@+id/value_of_HSV"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@+id/HSV_circle"
+            android:layout_alignLeft="@+id/HSV_circle"
+            android:layout_alignRight="@+id/HSV_circle"
+            android:layout_alignStart="@+id/HSV_circle"
+            android:layout_below="@+id/HSV_circle"
+            android:layout_marginTop="14dp"
+            android:max="@integer/maxSliderValue"
+            android:progress="@integer/sliderProgress"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/HSV_circle_black_overlay"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_above="@+id/value_of_HSV"
+            android:layout_alignEnd="@+id/HSV_circle"
+            android:layout_alignLeft="@+id/HSV_circle"
+            android:layout_alignRight="@+id/HSV_circle"
+            android:layout_alignStart="@+id/HSV_circle"
+            android:layout_alignTop="@+id/HSV_circle"
+            android:alpha="0.0"
+            android:contentDescription="@string/hsvCircleBlackOverlayDescription"
+            android:src="@drawable/overlay_ellipse" />
+
+        <ImageView
+            android:id="@+id/picked_color_preview_ellipse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/HSV_circle"
+            android:layout_alignStart="@+id/HSV_circle"
+            android:layout_alignTop="@+id/HSV_circle"
+            android:contentDescription="@string/previewEllipseDescription"
+            android:src="@drawable/preview_ellipse" />
 
 
-</RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>
