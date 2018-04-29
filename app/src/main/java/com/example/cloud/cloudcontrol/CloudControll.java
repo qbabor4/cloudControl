@@ -5,14 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -62,6 +66,8 @@ public class CloudControll extends AppCompatActivity {
     private int mBlue = 255; // 0-255
 
     private double mHSVCircleRadius;
+    private int mPickedColorMarkerRadius;
+    private int mDistanceFromLeftToIvHSVCircle;
 
     private boolean mIsBtnOnOffTurnedOn = true;
     private boolean mIsBtnRainbowTurnedOn = false;
@@ -70,7 +76,7 @@ public class CloudControll extends AppCompatActivity {
     private CloudDevice mCloudDevice = null;
 
     private ImageButton btnOnOff, btnRainbow, btnAllColorsChanging;
-    private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay;
+    private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay, ivPickedColorMarker;
     private SeekBar sbValueOfHSV;
 
     @Override
@@ -80,7 +86,7 @@ public class CloudControll extends AppCompatActivity {
 
         initCloudDeviceService();
         initComponents();
-        setFinalHsvCircleRadius();
+
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -107,6 +113,7 @@ public class CloudControll extends AppCompatActivity {
         setIvHSVCircle();
         setPickedColorPreviewEllipse();
         setIvHSVCircleBlackOverlay();
+        setIvPickedColorMarker();
         setSbValueOfHSV();
     }
 
@@ -197,29 +204,43 @@ public class CloudControll extends AppCompatActivity {
                 return ivHSVCircleOnTouchListener(v, event);
             }
         });
+        setFinalHsvCircleRadius();
     }
 
     private boolean ivHSVCircleOnTouchListener(View v, MotionEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
 
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            if(setRgbVariables(x, y));
-            {
+        // jest coś zrąbane z pokazywaniem markera na ekranie ... TODO
+
+
+        Log.d("k1", x + " OUT " + y);
+        // ustawic na sr
+        if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
+            if(setRgbVariables(x, y))  {
+                Log.d("k1", x + " " + y);
+                changePickedColorMarkerPosition(x, y);
                 changePreviewEllipseColor();
                 try {
                     mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); // send color
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Not Sent", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
         }
-        return true; // to to zmienia? TODO
+        return true;
     }
 
     private void setPickedColorPreviewEllipse(){
         ivPickedColorPreviewEllipse = (ImageView) findViewById(R.id.picked_color_preview_ellipse);
+    }
+
+    private void changePickedColorMarkerPosition(int x, int y){
+        // margines koła HSV trzeba dodać TODO
+        Log.d("k1", mDistanceFromLeftToIvHSVCircle + "");
+        ivPickedColorMarker.setX(x -mPickedColorMarkerRadius + mDistanceFromLeftToIvHSVCircle/2);
+        ivPickedColorMarker.setY(y -mPickedColorMarkerRadius);
     }
 
     private void changePreviewEllipseColor() {
@@ -235,6 +256,12 @@ public class CloudControll extends AppCompatActivity {
             @Override
             public boolean onPreDraw() {
                 mHSVCircleRadius = ivHSVCircle.getMeasuredWidth() / 2;
+                Log.d("k2", mHSVCircleRadius + "");
+
+                // tu chyba nie widzi jeszcze width main_layout. moze dac do zmiennych i na koncu ustawiac mDistanceFromLeftToIvHSVCircle TODO
+                // obliczył 1020 a nie 1080 i moze przez to sie chrzani marker .
+
+                mDistanceFromLeftToIvHSVCircle = getDistanceFromLeftToIvHSVCircle(ivHSVCircle.getMeasuredWidth());
                 ivHSVCircle.getViewTreeObserver().removeOnPreDrawListener(this);
                 return true;
             }
@@ -250,6 +277,8 @@ public class CloudControll extends AppCompatActivity {
      */
     private boolean setRgbVariables(int x, int y) {
         double saturation = HsvRgbCalculations.getSaturation(HsvRgbCalculations.getDistanceFromCenter(x, y, mHSVCircleRadius), mHSVCircleRadius);
+        // chyba źle liczy saturację, bo marker nie dochodzi po konca prawej krawedzi (do lewej dochodzi do konca)
+        Log.d("k3", saturation + "");
         if (saturation <= 1) {
             mSaturation = saturation;
             mHue = HsvRgbCalculations.getHue(x, y, mHSVCircleRadius);
@@ -257,8 +286,11 @@ public class CloudControll extends AppCompatActivity {
             mRed = rgbColors[0];
             mGreen = rgbColors[1];
             mBlue = rgbColors[2];
+            Log.d("k3", "true");
             return true;
         }
+        Log.d("k3", "false");
+        // chyba źle zwraca
         return false;
     }
 
@@ -271,6 +303,55 @@ public class CloudControll extends AppCompatActivity {
 
     private void setIvHSVCircleBlackOverlay(){
         ivHSVCircleBlackOverlay = (ImageView) findViewById(R.id.HSV_circle_black_overlay);
+    }
+
+    private void setIvPickedColorMarker(){
+        ivPickedColorMarker = (ImageView) findViewById(R.id.picked_color_marker);
+        setPickedColorMarkerRadius();
+    }
+
+    private void setPickedColorMarkerRadius(){
+        final ViewTreeObserver vto = ivPickedColorMarker.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mPickedColorMarkerRadius = ivPickedColorMarker.getMeasuredWidth() / 2;
+                ivPickedColorMarker.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
+    }
+
+    private int getDistanceFromLeftToIvHSVCircle(int ivHSVCircleWidth){
+        getDisplayWidth();
+        Log.d("k2", lol + "");
+        return (lol - ivHSVCircleWidth) /2;
+    }
+
+    private int lol;
+
+    private LinearLayout myLayout;
+
+    private void getDisplayWidth(){
+        myLayout = (LinearLayout) findViewById(R.id.main_layout);
+        myLayout.post(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                lol = myLayout.getWidth();
+                Log.i("TEST", "Layout width : "+ myLayout.getWidth());
+
+            }
+        });
+
+
+//    }
+//        Display display = getWindowManager().getDefaultDisplay();
+//        Point size = new Point();
+//        display.getSize(size);
+//        return size.x;
     }
 
     /**
@@ -295,7 +376,7 @@ public class CloudControll extends AppCompatActivity {
                 try {
                     mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Sending Error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Nie udało się wysłać wiadomości (seekbar)", Toast.LENGTH_SHORT).show();
                 }
             }
 

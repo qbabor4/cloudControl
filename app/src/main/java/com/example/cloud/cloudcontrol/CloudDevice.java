@@ -14,12 +14,6 @@ import java.util.UUID;
  */
 public class CloudDevice implements Serializable{
 
-//    private static final CloudDevice instance = new CloudDevice();
-//
-//    public static CloudDevice getInstance(){
-//        return instance;
-//    }
-
     private final String mName;
     private final String mAddress;
 

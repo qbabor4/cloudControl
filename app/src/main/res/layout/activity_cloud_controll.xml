@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -56,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/hsvCircleDescription"
-            app:srcCompat="@drawable/hsv_circle_fit" />
+            android:src="@drawable/hsv_circle_fit" />
 
         <ImageView
             android:id="@+id/HSV_circle_black_overlay"
@@ -79,6 +80,13 @@
             android:layout_alignTop="@+id/HSV_circle"
             android:contentDescription="@string/previewEllipseDescription"
             android:src="@drawable/preview_ellipse" />
+
+        <ImageView
+            android:id="@+id/picked_color_marker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/marker_02" />
 
     </RelativeLayout>
 
