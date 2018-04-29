@@ -47,6 +47,8 @@ import java.io.IOException;
  * jak kliknałem najpierw on / off to potem nie reagował... (moze to przez serial print)
  * jak sie wybierze kolor na kole, to ma sie odznaczyc przycisk wylaczenia
  * na suwaku ma patrzec czy jest raibow, czy nie
+ * jak sie zmienia kolor, to ma odznaczyc guziki
+ * moze jakies opacity na wszystko jak sie wyłącza..
  */
 public class CloudControll extends AppCompatActivity {
 
@@ -101,6 +103,7 @@ public class CloudControll extends AppCompatActivity {
     private void initComponents() {
         setBtnOnOff();
         setBtnRainbow();
+        setBtnAllColorsChanging();
         setIvHSVCircle();
         setPickedColorPreviewEllipse();
         setIvHSVCircleBlackOverlay();
@@ -122,7 +125,7 @@ public class CloudControll extends AppCompatActivity {
         try {
             if (mIsBtnOnOffTurnedOn) {
                 mCloudDevice.sendColor(Colors.BLACK.getColor());
-//                btnOnOff.setImageResource(R.drawable.button_01_pressed);
+                btnOnOff.setImageResource(R.drawable.button_01_pressed);
             } else {
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnOnOff.setImageResource(R.drawable.button_01);
