@@ -252,6 +252,7 @@ public class CloudControll extends AppCompatActivity {
      */
     private void setFinalHsvCircleRadius() {
         final ViewTreeObserver vto = ivHSVCircle.getViewTreeObserver();
+        final LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -266,6 +267,8 @@ public class CloudControll extends AppCompatActivity {
                 return true;
             }
         });
+
+        // ustawić tylko na mainLayout observer, bo jak dałem android:adjustViewBounds="true" na hsv circle to powinno odczytac normalnie wielkość TODO NEXT
     }
 
     /**
@@ -333,18 +336,21 @@ public class CloudControll extends AppCompatActivity {
     private LinearLayout myLayout;
 
     private void getDisplayWidth(){
-        myLayout = (LinearLayout) findViewById(R.id.main_layout);
-        myLayout.post(new Runnable()
-        {
-
-            @Override
-            public void run()
-            {
-                lol = myLayout.getWidth();
-                Log.i("TEST", "Layout width : "+ myLayout.getWidth());
-
-            }
-        });
+//        final ViewTreeObserver vto = ivHSVCircle.getViewTreeObserver();
+//        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//            @Override
+//            public boolean onPreDraw() {
+//                mHSVCircleRadius = ivHSVCircle.getMeasuredWidth() / 2;
+//                Log.d("k2", mHSVCircleRadius + "");
+//
+//                // tu chyba nie widzi jeszcze width main_layout. moze dac do zmiennych i na koncu ustawiac mDistanceFromLeftToIvHSVCircle TODO
+//                // obliczył 1020 a nie 1080 i moze przez to sie chrzani marker .
+//
+//                mDistanceFromLeftToIvHSVCircle = getDistanceFromLeftToIvHSVCircle(ivHSVCircle.getMeasuredWidth());
+//                ivHSVCircle.getViewTreeObserver().removeOnPreDrawListener(this);
+//                return true;
+//            }
+//        });
 
 
 //    }

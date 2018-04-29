@@ -56,17 +56,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/hsvCircleDescription"
-            android:src="@drawable/hsv_circle_fit" />
+            android:src="@drawable/hsv_circle_fit_04"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="fitXY"/>
 
         <ImageView
             android:id="@+id/HSV_circle_black_overlay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/HSV_circle"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/HSV_circle"
             android:layout_alignLeft="@+id/HSV_circle"
             android:layout_alignRight="@+id/HSV_circle"
-            android:layout_alignBottom="@+id/HSV_circle"
+            android:layout_alignTop="@+id/HSV_circle"
             android:alpha="0.0"
             android:contentDescription="@string/hsvCircleBlackOverlayDescription"
             android:src="@drawable/overlay_ellipse" />
