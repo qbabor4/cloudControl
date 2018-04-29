@@ -10,41 +10,45 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_marginBottom="10dp"
+        android:weightSum="4">
 
         <ImageButton
             android:id="@+id/btn_on_off"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:layout_weight="1"
             app:srcCompat="@drawable/button_01" />
 
         <ImageButton
             android:id="@+id/btn_all_colors_changing"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/button_02" />
 
         <ImageButton
             android:id="@+id/btn_rainbow"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
             android:layout_weight="1"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/button_03" />
+
 
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/HSV_circle"
@@ -54,30 +58,14 @@
             android:contentDescription="@string/hsvCircleDescription"
             app:srcCompat="@drawable/hsv_circle_fit" />
 
-        <SeekBar
-            android:id="@+id/value_of_HSV"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignEnd="@+id/HSV_circle"
-            android:layout_alignLeft="@+id/HSV_circle"
-            android:layout_alignRight="@+id/HSV_circle"
-            android:layout_alignStart="@+id/HSV_circle"
-            android:layout_below="@+id/HSV_circle"
-            android:layout_marginTop="14dp"
-            android:max="@integer/maxSliderValue"
-            android:progress="@integer/sliderProgress"
-            android:visibility="visible" />
-
         <ImageView
             android:id="@+id/HSV_circle_black_overlay"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_above="@+id/value_of_HSV"
-            android:layout_alignEnd="@+id/HSV_circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/HSV_circle"
             android:layout_alignLeft="@+id/HSV_circle"
             android:layout_alignRight="@+id/HSV_circle"
-            android:layout_alignStart="@+id/HSV_circle"
-            android:layout_alignTop="@+id/HSV_circle"
+            android:layout_alignBottom="@+id/HSV_circle"
             android:alpha="0.0"
             android:contentDescription="@string/hsvCircleBlackOverlayDescription"
             android:src="@drawable/overlay_ellipse" />
@@ -92,12 +80,35 @@
             android:contentDescription="@string/previewEllipseDescription"
             android:src="@drawable/preview_ellipse" />
 
-
-
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        >
 
+        <ImageView
+            android:id="@+id/brightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/brightness_03" />
 
+        <SeekBar
+            android:id="@+id/value_of_HSV"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_toRightOf="@+id/brightness"
+            android:layout_centerVertical="true"
+            android:max="@integer/maxSliderValue"
+            android:progress="@integer/sliderProgress"
+            android:visibility="visible"
+            android:layout_toEndOf="@+id/brightness"
+            />
 
+    </RelativeLayout>
 
 </LinearLayout>
