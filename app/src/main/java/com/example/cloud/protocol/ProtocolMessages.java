@@ -15,12 +15,12 @@ public class ProtocolMessages {
     }
 
     private static String getRainbowModeFrame(EProtocolRainbowMode eProtocolRainbowMode, int brightness){
-        return getMainFrame(EProtocol.RAINBOW.getString() + EProtocol.SEPARATOR.getChar() +  EProtocol.RAINBOW_MODE.getString() + eProtocolRainbowMode.getMode() + EProtocol.BRIGHTNESS.getString() + brightness );
+        return getMainFrame(EProtocol.RAINBOW.getString() + EProtocol.SEPARATOR.getChar() +  EProtocol.RAINBOW_MODE.getString() + eProtocolRainbowMode.getMode() + EProtocol.SEPARATOR.getChar() + EProtocol.BRIGHTNESS.getString() + brightness );
     }
 
-    public static String getRainbowMessage() {
-        return getMainFrame(EProtocol.RAINBOW.getString() + EProtocol.SEPARATOR.getChar());
-    }
+//    public static String getRainbowMessage() {
+//        return getMainFrame(EProtocol.RAINBOW.getString() + EProtocol.SEPARATOR.getChar());
+//    }
 
     public static String getColorMessage(String color){
         return getMainFrame(EProtocol.COLOR.getString() + EProtocol.SEPARATOR.getChar()+ color );
@@ -30,6 +30,4 @@ public class ProtocolMessages {
         return(EProtocol.START.getChar() + msg  + EProtocol.END.getChar());
     }
 
-
-    // dawac separator na koncu, czy nie? TODO
 }
