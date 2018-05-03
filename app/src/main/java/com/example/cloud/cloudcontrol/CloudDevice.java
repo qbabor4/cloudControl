@@ -3,6 +3,8 @@ package com.example.cloud.cloudcontrol;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import com.example.cloud.protocol.ProtocolMessages;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -63,15 +65,19 @@ public class CloudDevice implements Serializable{
      * @throws IOException
      */
     public void sendColor(String color) throws IOException {
-        send(ProtocolMessages.getColorFrame(color));
+        send(ProtocolMessages.getColorMessage(color));
     }
 
     /**
      * Sends rainbow command to device
      * @throws IOException
      */
-    public void sendRainbow() throws IOException { // z brightness i czy wszystkie takie same TODO
-        send(ProtocolMessages.getRainbowFrame());
+    public void sendRainbow(int brightness) throws IOException { // z brightness i czy wszystkie takie same TODO
+        send(ProtocolMessages.getRainbowMessage()); // zmienic z brightness TODO
+    }
+
+    public void sendAllTheSameChanging(int brightness) throws IOException{
+        send(ProtocolMessages.getAllTheSameChangingMessage(brightness));
     }
 
 

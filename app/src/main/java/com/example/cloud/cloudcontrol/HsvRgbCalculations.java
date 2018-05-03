@@ -41,6 +41,15 @@ class HsvRgbCalculations {
         return HsvRgbCalculations.decToHex(red) + HsvRgbCalculations.decToHex(green) + HsvRgbCalculations.decToHex(blue);
     }
 
+    /**
+     * Changes 0-1 double to 0-255 int
+     * @param value value from seekbar
+     * @return 0-255 as brightness
+     */
+    public static int getBrightness(double value){
+        return (int)(value*255);
+    }
+
     /// Convert HSV to RGB
     /// h is from 0-360
     /// s,v values are 0-1

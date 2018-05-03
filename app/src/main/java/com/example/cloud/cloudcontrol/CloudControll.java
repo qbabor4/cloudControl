@@ -20,42 +20,40 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.cloud.protocol.ProtocolMessages;
+
 import java.io.IOException;
+
+import static com.example.cloud.cloudcontrol.HsvRgbCalculations.getBrightness;
 
 /**
  * TODO
- * - zrobic z tego bibliotekę i ją importować.
- * - skalowac zdjecie ( match_parent? ) do ekranu, zeby było jak najwieksze ( kilka pixeli zeby było z po bokach
- * - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja. Jak to zrobić jak ktoś ma mniejszy ekran?
- * - Bluetooth low Energy
- * - dopisac listenery do xml
- * - disabled na buttonie search jak szuka
- * - okragłe logo (manifest)
- * - zobaczyc jak zrobić ruchomy splash screen
- * - błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
- * - zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
- * - jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
- * - jak sie nacisnie "tak" na "czy włączyc bluetooth", to jest czasami "unfortunatelly bluetooth has stoped" (potem jest ok, bo działa)
- * - mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
- * - jak po dłuższym czasie sie znowu przywraca okno, to chmura sie crashuje
- * - dodać cień do guzików i dodać guziki
- * - zmienic kolor prewiew elipse ( tak jak zmieniłem *0.65 overlay ellipse
- * - zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
- * zobaczyc czy wysyła jak sie kliknie na białe pole na zdjęciu
+ * - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja. Jak to zrobić jak ktoś ma mniejszy ekran? (chyba linearlayout bedzie ok z wagami)
+ * Bluetooth low Energy
+ * okragłe logo (manifest)
+ * zobaczyc jak zrobić ruchomy splash screen
+ * błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
+ * animacja łączenia jak łączy z chmurą (bo sie zawiesza)
+ * zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
+ * jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
+ * mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
+ * zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
  * wraca do bluetootha jak sie wróci klawiszem wracającym i przywróci
- * jak tylko dotknę to nie zmienia sie kolor i chyba nie wysyła
  * jak sie klika na rainbow i onOFF to sie pokazuje ostatni kolor a nie gasi (przy klikaniu na rainbow trzeba ustawić jako ON chyba
- * setowac w obiekcie mHSVCircleRadius, zeby nie podawac cały czas
  * komunikat jak nic nie znajdzie, żeby sparował
  * Jak sie nie połączyc, to żeby podszedł bliżej
- * jak kliknałem najpierw on / off to potem nie reagował... (moze to przez serial print)
  * jak sie wybierze kolor na kole, to ma sie odznaczyc przycisk wylaczenia
  * na suwaku ma patrzec czy jest raibow, czy nie
  * jak sie zmienia kolor, to ma odznaczyc guziki
  * moze jakies opacity na wszystko jak sie wyłącza..
+ * toolbar
+ * czemu nie byte przy r g b ?
+ * zwiekszyć zasięg łączenia z bluetoothem
+ *
+ * TODO IFTIME:
+ * zrobic z tego bibliotekę i ją importować.
  */
 public class CloudControll extends AppCompatActivity {
-
 
     private int mHue = 0; // 0-360
     private double mSaturation = 0; // 0-1
@@ -67,7 +65,6 @@ public class CloudControll extends AppCompatActivity {
 
     private double mHSVCircleRadius;
     private int mPickedColorMarkerRadius;
-    private int mDistanceFromLeftToIvHSVCircle;
 
     private boolean mIsBtnOnOffTurnedOn = true;
     private boolean mIsBtnRainbowTurnedOn = false;
@@ -128,7 +125,7 @@ public class CloudControll extends AppCompatActivity {
         });
     }
 
-    public void onBtnOnOffClick(View view) { // zmiana image na wyłączony TODO
+    public void onBtnOnOffClick(View view) {
         try {
             if (mIsBtnOnOffTurnedOn) {
                 mCloudDevice.sendColor(Colors.BLACK.getColor());
@@ -162,10 +159,10 @@ public class CloudControll extends AppCompatActivity {
     private void onBtnRainbowClick(View v){
         try{
             if (!mIsBtnRainbowTurnedOn) {
-                mCloudDevice.sendRainbow();
+                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
                 btnRainbow.setImageResource(R.drawable.button_03_pressed);
             } else {
-                /* go back to previous color */
+                /* Show previous color */
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnRainbow.setImageResource(R.drawable.button_03);
             }
@@ -187,13 +184,19 @@ public class CloudControll extends AppCompatActivity {
     }
 
     private void OnBtnAllColorsChangingClick(View v){
-        if(!mIsBtnAllColorsChangingTurnedOn){
-            // wyslij polecenie ze zmianą
-            btnAllColorsChanging.setImageResource(R.drawable.button_02_pressed);
-        } else {
-            btnAllColorsChanging.setImageResource(R.drawable.button_02);
+        try{
+            if(!mIsBtnAllColorsChangingTurnedOn){
+                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+                btnAllColorsChanging.setImageResource(R.drawable.button_02_pressed);
+            } else {
+                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                btnAllColorsChanging.setImageResource(R.drawable.button_02);
+            }
+            mIsBtnAllColorsChangingTurnedOn = !mIsBtnAllColorsChangingTurnedOn;
+        } catch (IOException ex){
+            ex.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
-        mIsBtnAllColorsChangingTurnedOn = !mIsBtnAllColorsChangingTurnedOn;
     }
 
     private void setIvHSVCircle() {
@@ -211,14 +214,8 @@ public class CloudControll extends AppCompatActivity {
         int x = (int) event.getX();
         int y = (int) event.getY();
 
-        // jest coś zrąbane z pokazywaniem markera na ekranie ... TODO
-
-
-        Log.d("k1", x + " OUT " + y);
-        // ustawic na sr
         if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
             if(setRgbVariables(x, y))  {
-                Log.d("k1", x + " " + y);
                 changePickedColorMarkerPosition(x, y);
                 changePreviewEllipseColor();
                 try {
@@ -237,9 +234,7 @@ public class CloudControll extends AppCompatActivity {
     }
 
     private void changePickedColorMarkerPosition(int x, int y){
-        // margines koła HSV trzeba dodać TODO
-        Log.d("k1", mDistanceFromLeftToIvHSVCircle + "");
-        ivPickedColorMarker.setX(x -mPickedColorMarkerRadius + mDistanceFromLeftToIvHSVCircle/2);
+        ivPickedColorMarker.setX(x -mPickedColorMarkerRadius );
         ivPickedColorMarker.setY(y -mPickedColorMarkerRadius);
     }
 
@@ -252,23 +247,14 @@ public class CloudControll extends AppCompatActivity {
      */
     private void setFinalHsvCircleRadius() {
         final ViewTreeObserver vto = ivHSVCircle.getViewTreeObserver();
-        final LinearLayout mainLayout = (LinearLayout) findViewById(R.id.main_layout);
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 mHSVCircleRadius = ivHSVCircle.getMeasuredWidth() / 2;
-                Log.d("k2", mHSVCircleRadius + "");
-
-                // tu chyba nie widzi jeszcze width main_layout. moze dac do zmiennych i na koncu ustawiac mDistanceFromLeftToIvHSVCircle TODO
-                // obliczył 1020 a nie 1080 i moze przez to sie chrzani marker .
-
-                mDistanceFromLeftToIvHSVCircle = getDistanceFromLeftToIvHSVCircle(ivHSVCircle.getMeasuredWidth());
                 ivHSVCircle.getViewTreeObserver().removeOnPreDrawListener(this);
                 return true;
             }
         });
-
-        // ustawić tylko na mainLayout observer, bo jak dałem android:adjustViewBounds="true" na hsv circle to powinno odczytac normalnie wielkość TODO NEXT
     }
 
     /**
@@ -280,7 +266,6 @@ public class CloudControll extends AppCompatActivity {
      */
     private boolean setRgbVariables(int x, int y) {
         double saturation = HsvRgbCalculations.getSaturation(HsvRgbCalculations.getDistanceFromCenter(x, y, mHSVCircleRadius), mHSVCircleRadius);
-        // chyba źle liczy saturację, bo marker nie dochodzi po konca prawej krawedzi (do lewej dochodzi do konca)
         Log.d("k3", saturation + "");
         if (saturation <= 1) {
             mSaturation = saturation;
@@ -289,11 +274,8 @@ public class CloudControll extends AppCompatActivity {
             mRed = rgbColors[0];
             mGreen = rgbColors[1];
             mBlue = rgbColors[2];
-            Log.d("k3", "true");
             return true;
         }
-        Log.d("k3", "false");
-        // chyba źle zwraca
         return false;
     }
 
@@ -323,41 +305,6 @@ public class CloudControll extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    private int getDistanceFromLeftToIvHSVCircle(int ivHSVCircleWidth){
-        getDisplayWidth();
-        Log.d("k2", lol + "");
-        return (lol - ivHSVCircleWidth) /2;
-    }
-
-    private int lol;
-
-    private LinearLayout myLayout;
-
-    private void getDisplayWidth(){
-//        final ViewTreeObserver vto = ivHSVCircle.getViewTreeObserver();
-//        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//            @Override
-//            public boolean onPreDraw() {
-//                mHSVCircleRadius = ivHSVCircle.getMeasuredWidth() / 2;
-//                Log.d("k2", mHSVCircleRadius + "");
-//
-//                // tu chyba nie widzi jeszcze width main_layout. moze dac do zmiennych i na koncu ustawiac mDistanceFromLeftToIvHSVCircle TODO
-//                // obliczył 1020 a nie 1080 i moze przez to sie chrzani marker .
-//
-//                mDistanceFromLeftToIvHSVCircle = getDistanceFromLeftToIvHSVCircle(ivHSVCircle.getMeasuredWidth());
-//                ivHSVCircle.getViewTreeObserver().removeOnPreDrawListener(this);
-//                return true;
-//            }
-//        });
-
-
-//    }
-//        Display display = getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        return size.x;
     }
 
     /**

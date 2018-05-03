@@ -1,18 +1,22 @@
-package com.example.cloud.cloudcontrol;
+package com.example.cloud.protocol;
 
 /**
  * Created by Jakub on 09-Apr-18.
+ * generyka zrobić
  */
 
 public enum EProtocol {
+
+    /* Protocol chars */
     START('<'),
     END('>'),
     SEPARATOR('#'),
+
+    /* Protocol strings */
     COLOR("col"),
     RAINBOW("rbw"),
-    BRIGHTNESS("brg"),
-    ALL_THE_SAME("ats");
-
+    BRIGHTNESS("bgh"),
+    RAINBOW_MODE("mod");
 
     private char protocolChar;
     private String protocolStr;

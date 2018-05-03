@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_margin="10dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -49,7 +49,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
 
         <ImageView
             android:id="@+id/HSV_circle"
@@ -58,7 +60,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:contentDescription="@string/hsvCircleDescription"
-            android:src="@drawable/hsv_circle_fit_04"
+            android:src="@drawable/hsv_circle_fit_05"
             android:adjustViewBounds="true"
             android:cropToPadding="false"
             android:scaleType="fitXY"/>
