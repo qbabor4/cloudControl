@@ -5,55 +5,38 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.example.cloud.protocol.ProtocolMessages;
-
 import java.io.IOException;
-
-import static com.example.cloud.cloudcontrol.HsvRgbCalculations.getBrightness;
 
 /**
  * TODO
- * - moze sliderlayout  na ekranie ( mniejsze rozdzielczosci ucinaja. Jak to zrobić jak ktoś ma mniejszy ekran? (chyba linearlayout bedzie ok z wagami)
- * Bluetooth low Energy
  * okragłe logo (manifest)
- * zobaczyc jak zrobić ruchomy splash screen
- * błąd IOexception wtedy gdy chce sam połaczyc sie z HC-06 jak on nie jest aktywny
- * animacja łączenia jak łączy z chmurą (bo sie zawiesza)
+ * animacja łączenia jak łączy z chmurą (bo sie zawiesza) nie odpowiada aplikacja czasami
  * zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
- * jak nie sparowane, to albo sparowac albo zobaczyc jak to wyglada w apce
- * mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą
- * zmiana guzikia włacz/wyłącz na inny jak sie kliknie i powrót jak się dotknie koła albo suwaka
- * wraca do bluetootha jak sie wróci klawiszem wracającym i przywróci
- * jak sie klika na rainbow i onOFF to sie pokazuje ostatni kolor a nie gasi (przy klikaniu na rainbow trzeba ustawić jako ON chyba
- * komunikat jak nic nie znajdzie, żeby sparował
- * Jak sie nie połączyc, to żeby podszedł bliżej
- * jak sie wybierze kolor na kole, to ma sie odznaczyc przycisk wylaczenia
- * na suwaku ma patrzec czy jest raibow, czy nie
- * jak sie zmienia kolor, to ma odznaczyc guziki
- * moze jakies opacity na wszystko jak sie wyłącza..
- * toolbar
- * czemu nie byte przy r g b ?
- * zwiekszyć zasięg łączenia z bluetoothem
+ * mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą w instrukcji
+ *
+ * jak sie bedzie dało wysłać, to można próbować znowu łączyć z tą chmurą
+ * języki, ciemny mode, przejscie do łączenia (jak bedzie chcial inna chmure połączyć) w ustawieniach
+ * zapisac wybory uzytkownika czy dark theme chce (sharedpreferences)
+ * toolbar koloru drewna (i moze tekstura też)
  *
  * TODO IFTIME:
  * zrobic z tego bibliotekę i ją importować.
  */
-public class CloudControll extends AppCompatActivity {
+public class CloudController extends AppCompatActivity {
 
     private int mHue = 0; // 0-360
     private double mSaturation = 0; // 0-1
@@ -66,9 +49,9 @@ public class CloudControll extends AppCompatActivity {
     private double mHSVCircleRadius;
     private int mPickedColorMarkerRadius;
 
-    private boolean mIsBtnOnOffTurnedOn = true;
-    private boolean mIsBtnRainbowTurnedOn = false;
-    private boolean mIsBtnAllColorsChangingTurnedOn = false;
+    private boolean mIsBtnOnOffPressed = false;
+    private boolean mIsBtnRainbowPressed = false;
+    private boolean mIsBtnAllColorsChangingPressed = false;
 
     private CloudDevice mCloudDevice = null;
 
@@ -79,11 +62,22 @@ public class CloudControll extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cloud_controll);
+        setContentView(R.layout.activity_cloud_controller);
 
         initCloudDeviceService();
         initComponents();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_cloud_controll_menu, menu);
+        return true;
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -104,6 +98,7 @@ public class CloudControll extends AppCompatActivity {
     }
 
     private void initComponents() {
+        setToolbar();
         setBtnOnOff();
         setBtnRainbow();
         setBtnAllColorsChanging();
@@ -114,6 +109,10 @@ public class CloudControll extends AppCompatActivity {
         setSbValueOfHSV();
     }
 
+    private void setToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.cloud_controller_toolbar);
+        setSupportActionBar(toolbar);
+    }
 
     private void setBtnOnOff() {
         btnOnOff = (ImageButton) findViewById(R.id.btn_on_off);
@@ -127,23 +126,46 @@ public class CloudControll extends AppCompatActivity {
 
     public void onBtnOnOffClick(View view) {
         try {
-            if (mIsBtnOnOffTurnedOn) {
-                mCloudDevice.sendColor(Colors.BLACK.getColor());
-                btnOnOff.setImageResource(R.drawable.button_01_pressed);
-            } else {
+            if (mIsBtnOnOffPressed) {
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnOnOff.setImageResource(R.drawable.button_01);
+            } else {
+                mCloudDevice.sendColor(Colors.BLACK.getColor());
+                btnOnOff.setImageResource(R.drawable.button_01_pressed);
+                setOtherButtonsUnpressed(btnOnOff);
             }
-            mIsBtnOnOffTurnedOn = !mIsBtnOnOffTurnedOn;
+            mIsBtnOnOffPressed = !mIsBtnOnOffPressed;
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void setOtherButtonsOff(ImageButton pressedButton){
-        // odznaczac pozostałe jak kliknie pressedButton TODO
-        //zmienne i zdjecia
+    private void setOtherButtonsUnpressed(Object pressedButton){
+        if (!(pressedButton).equals(btnOnOff)){
+            unpressBtnOnOff();
+        }
+        if (!pressedButton.equals(btnRainbow)){
+            unpressBtnRainbow();
+        }
+        if (!pressedButton.equals(btnAllColorsChanging)){
+            unpressBtnAllColorsChanging();
+        }
+    }
+
+    private void unpressBtnOnOff(){
+        mIsBtnOnOffPressed = false;
+        btnOnOff.setImageResource(R.drawable.button_01);
+    }
+
+    private void unpressBtnRainbow(){
+        mIsBtnRainbowPressed = false;
+        btnRainbow.setImageResource(R.drawable.button_03);
+    }
+
+    private void unpressBtnAllColorsChanging(){
+        mIsBtnAllColorsChangingPressed = false;
+        btnAllColorsChanging.setImageResource(R.drawable.button_02);
     }
 
     private void setBtnRainbow(){
@@ -158,15 +180,16 @@ public class CloudControll extends AppCompatActivity {
 
     private void onBtnRainbowClick(View v){
         try{
-            if (!mIsBtnRainbowTurnedOn) {
+            if (!mIsBtnRainbowPressed) {
                 mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
                 btnRainbow.setImageResource(R.drawable.button_03_pressed);
+                setOtherButtonsUnpressed(btnRainbow);
             } else {
                 /* Show previous color */
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnRainbow.setImageResource(R.drawable.button_03);
             }
-            mIsBtnRainbowTurnedOn = !mIsBtnRainbowTurnedOn;
+            mIsBtnRainbowPressed = !mIsBtnRainbowPressed;
         }catch (IOException ex){
             ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
@@ -185,14 +208,15 @@ public class CloudControll extends AppCompatActivity {
 
     private void OnBtnAllColorsChangingClick(View v){
         try{
-            if(!mIsBtnAllColorsChangingTurnedOn){
+            if(!mIsBtnAllColorsChangingPressed){
                 mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
                 btnAllColorsChanging.setImageResource(R.drawable.button_02_pressed);
+                setOtherButtonsUnpressed(btnAllColorsChanging);
             } else {
                 mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnAllColorsChanging.setImageResource(R.drawable.button_02);
             }
-            mIsBtnAllColorsChangingTurnedOn = !mIsBtnAllColorsChangingTurnedOn;
+            mIsBtnAllColorsChangingPressed = !mIsBtnAllColorsChangingPressed;
         } catch (IOException ex){
             ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
@@ -216,6 +240,7 @@ public class CloudControll extends AppCompatActivity {
 
         if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
             if(setRgbVariables(x, y))  {
+                setOtherButtonsUnpressed(EmptyObject.emptyObject);
                 changePickedColorMarkerPosition(x, y);
                 changePreviewEllipseColor();
                 try {
@@ -322,27 +347,33 @@ public class CloudControll extends AppCompatActivity {
         sbValueOfHSV.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                unpressBtnOnOff();
                 changeHsvCircleBlackOverlaysAlpha(progress);
                 setValue(progress);
                 setRgbVariables();
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                    sendCommand();
                 } catch (IOException e) {
                     Toast.makeText(getApplicationContext(), "Nie udało się wysłać wiadomości (seekbar)", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
+    }
+
+    private void sendCommand() throws IOException {
+        if (mIsBtnRainbowPressed){
+            mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+        } else if (mIsBtnAllColorsChangingPressed){
+            mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+        } else {
+            mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+        }
     }
 
     private void setValue(int progress){
@@ -352,6 +383,11 @@ public class CloudControll extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        try {
+            mCloudDevice.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         unbindService(mConnection); // może być problem jak sie bedzie przechodziło do innych activity 
     }
 }

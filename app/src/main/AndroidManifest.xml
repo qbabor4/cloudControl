@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".CloudControll"
+            android:name=".CloudController"
             android:screenOrientation="portrait">
 
         </activity>
