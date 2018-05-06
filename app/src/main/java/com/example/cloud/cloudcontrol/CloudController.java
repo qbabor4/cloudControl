@@ -93,7 +93,7 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void goToOptionsActivity() {
-        Intent intent = new Intent(getApplicationContext(), Options.class);
+        Intent intent = new Intent(getApplicationContext(), Settings.class);
         startActivity(intent);
     }
 

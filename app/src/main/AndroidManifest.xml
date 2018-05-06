@@ -29,7 +29,7 @@
             android:name=".ConnectionService"
             android:exported="false" />
 
-        <activity android:name=".Options"></activity>
+        <activity android:name=".Settings"></activity>
     </application>
 
 </manifest>

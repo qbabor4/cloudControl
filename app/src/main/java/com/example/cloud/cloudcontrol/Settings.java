@@ -14,12 +14,12 @@ import android.view.Menu;
  * przejcie do wyboru chmury
  *
  */
-public class Options extends AppCompatActivity {
+public class Settings extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_options);
+        setContentView(R.layout.activity_settings);
 
         setComponents();
     }
@@ -29,7 +29,7 @@ public class Options extends AppCompatActivity {
     }
 
     private void setToolbar(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.options_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -37,7 +37,7 @@ public class Options extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_options_menu, menu);
+        getMenuInflater().inflate(R.menu.toolbar_settings_menu, menu);
         return true;
     }
 

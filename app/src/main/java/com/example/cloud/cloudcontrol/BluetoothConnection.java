@@ -57,9 +57,26 @@ public class BluetoothConnection extends AppCompatActivity {
 
         setBluetoothAdapter(getBluetoothAdapter());
         setComponents();
+        addPairedDevicesToList();
         bindToConnectionService();
 
-        addPairedDevicesToList();
+    }
+
+    private void connectIfOnlyOneDeviceFound(){
+        if (listItems.size() == 1){
+            try {
+                if (mConnectionService == null){
+                    Log.d("k12", "1");
+                }
+                mConnectionService.connectDevice(mAdapter.getItem(0));
+                goToCloudControllerActivity();
+            } catch (IOException ex){
+                ex.printStackTrace();
+                Log.d("k12", ex.getMessage());
+            }
+        } else {
+            Log.d("k12", "LOLOL" + listItems.size());
+        }
     }
 
     private BluetoothAdapter getBluetoothAdapter() {
@@ -116,6 +133,7 @@ public class BluetoothConnection extends AppCompatActivity {
             /* We've bound to LocalService, cast the IBinder and get LocalService instance */
             ConnectionService.LocalBinder binder = (ConnectionService.LocalBinder) service;
             mConnectionService = binder.getService();
+            connectIfOnlyOneDeviceFound();
         }
 
         @Override
