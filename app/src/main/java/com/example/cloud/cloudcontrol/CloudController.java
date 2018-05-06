@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -32,6 +33,7 @@ import java.io.IOException;
  * języki, ciemny mode, przejscie do łączenia (jak bedzie chcial inna chmure połączyć) w ustawieniach
  * zapisac wybory uzytkownika czy dark theme chce (sharedpreferences)
  * toolbar koloru drewna (i moze tekstura też)
+ * zmienic kolor seekbara
  *
  * TODO IFTIME:
  * zrobic z tego bibliotekę i ją importować.
@@ -76,9 +78,26 @@ public class CloudController extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_cloud_controll_menu, menu);
+        getMenuInflater().inflate(R.menu.cloud_controll_toolbar_menu, menu);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.toolbar_options_icon){
+            goToOptionsActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void goToOptionsActivity() {
+        Intent intent = new Intent(getApplicationContext(), Options.class);
+        startActivity(intent);
+    }
+
+
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override

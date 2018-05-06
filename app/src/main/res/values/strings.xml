@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chmura RGB</string>
+    <string name="app_name">Cloud</string>
     <string name="Brightness">Brightness</string>
     <string name="hsvCircleDescription">Color circle</string>
     <string name="hsvCircleBlackOverlayDescription">Black overlay ellipse on hsv circle</string>
@@ -8,5 +8,6 @@
     <string name="title_activity_fullscreen_startup_screen">FullscreenActivityStartupScreen</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="theme_label">Dark Theme</string>
 
 </resources>

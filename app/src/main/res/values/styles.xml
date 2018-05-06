@@ -13,5 +13,9 @@
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
+    <style name="ToolbarWhiteBackArrow" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/backArrowPrimary</item>
+    </style>
+
 
 </resources>

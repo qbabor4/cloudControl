@@ -30,6 +30,8 @@ import java.util.Set;
  * zrobic 2 urzadzenie i sprobowac laczys sie tylko z 1 a nie z 2
  * angielski w opcjach
  * zwiekszyć zasięg łączenia z bluetoothem
+ * wywaliło mi błąd podczas dłuższego łączenia (moze przez toast?)
+ *
  */
 public class BluetoothConnection extends AppCompatActivity {
 
@@ -54,7 +56,7 @@ public class BluetoothConnection extends AppCompatActivity {
         setContentView(R.layout.activity_bluetooth_connection);
 
         setBluetoothAdapter(getBluetoothAdapter());
-        initComponents();
+        setComponents();
         bindToConnectionService();
 
         addPairedDevicesToList();
@@ -80,7 +82,7 @@ public class BluetoothConnection extends AppCompatActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private void initComponents() {
+    private void setComponents() {
         setToolbar();
         setListView();
         setBtnRefreshPairedDevices();
@@ -144,7 +146,7 @@ public class BluetoothConnection extends AppCompatActivity {
                     mConnectionService.connectDevice(cloudDevice);
                     goToCloudControllerActivity();
                 } catch (IOException ex) {
-                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia", Toast.LENGTH_LONG).show();
                 }
                 try {
                     runOnUiThread(new Runnable() {
@@ -154,7 +156,7 @@ public class BluetoothConnection extends AppCompatActivity {
                         }
                     });
                 } catch (final Exception ex) {
-                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem" + ex.getMessage(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem" + ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }.start();
