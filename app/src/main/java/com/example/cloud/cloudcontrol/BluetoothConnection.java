@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -24,13 +25,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static com.example.cloud.cloudcontrol.Settings.PREFS_NAME;
+import static com.example.cloud.cloudcontrol.Settings.PREF_DARK_THEME;
+
 /**
  * TODO:
- * jak tylko 1 urzadzenie, to od razu połącz (pojebane jakieś... nullPointery na cloudie.. i sie nei da zrobic connect na tym.. lol.)
  * zrobic 2 urzadzenie i sprobowac laczys sie tylko z 1 a nie z 2
  * angielski w opcjach
  * zwiekszyć zasięg łączenia z bluetoothem
- * wywaliło mi błąd podczas dłuższego łączenia (moze przez toast?)
  *
  */
 public class BluetoothConnection extends AppCompatActivity {
@@ -48,10 +50,17 @@ public class BluetoothConnection extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme); /* Splash screen */
+
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+
+        if(useDarkTheme) {
+            setTheme(R.style.AppTheme_Dark_NoActionBar);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
 

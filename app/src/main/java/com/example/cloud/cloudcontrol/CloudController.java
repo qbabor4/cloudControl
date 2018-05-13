@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import static com.example.cloud.cloudcontrol.Settings.PREFS_NAME;
+import static com.example.cloud.cloudcontrol.Settings.PREF_DARK_THEME;
+
 /**
  * TODO
  * okragłe logo (manifest)
@@ -31,9 +35,7 @@ import java.io.IOException;
  *
  * jak sie bedzie dało wysłać, to można próbować znowu łączyć z tą chmurą
  * języki, ciemny mode, przejscie do łączenia (jak bedzie chcial inna chmure połączyć) w ustawieniach
- * zapisac wybory uzytkownika czy dark theme chce (sharedpreferences)
- * toolbar koloru drewna (i moze tekstura też)
- * zmienic kolor seekbara
+ * jak sie klika na splashscrren to moze wysyalić null przy sendColor, bo jeszcze nie pobrał obiektu chmury
  *
  * TODO IFTIME:
  * zrobic z tego bibliotekę i ją importować.
@@ -61,13 +63,35 @@ public class CloudController extends AppCompatActivity {
     private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay, ivPickedColorMarker;
     private SeekBar sbValueOfHSV;
 
+    private boolean isDarkTheme = false;
+    private boolean useDarkTheme = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+
+        if(useDarkTheme && !isDarkTheme) {
+            setTheme(R.style.AppTheme_Dark_NoActionBar);
+            isDarkTheme = true;
+        }
+
         setContentView(R.layout.activity_cloud_controller);
 
         initCloudDeviceService();
         initComponents();
+    }
+
+    @Override
+    protected void onResume(){
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+        if ( (!isDarkTheme && useDarkTheme) || (isDarkTheme && !useDarkTheme) )  {
+            recreate();
+        }
+        super.onResume();
 
     }
 
@@ -399,14 +423,16 @@ public class CloudController extends AppCompatActivity {
         mValue = progress / 100.;
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            mCloudDevice.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        unbindService(mConnection); // może być problem jak sie bedzie przechodziło do innych activity 
-    }
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        try {
+//            mCloudDevice.disconnect();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        unbindService(mConnection); // może być problem jak sie bedzie przechodziło do innych activity
+//    }
+
+
 }

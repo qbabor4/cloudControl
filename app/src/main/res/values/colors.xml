@@ -2,9 +2,13 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#40f1e3</color>
     <color name="toolbarPrimary">#f4bc42</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="backArrowPrimary">#ffffff</color>
+
+    <color name="darkColorPrimary">#1e2756</color>
+    <color name="darkColorPrimaryDark">#141831</color>
+    <color name="darkColorAccent">#40f1e3</color>
 </resources>

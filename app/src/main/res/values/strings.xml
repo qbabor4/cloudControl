@@ -8,6 +8,6 @@
     <string name="title_activity_fullscreen_startup_screen">FullscreenActivityStartupScreen</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="theme_label">Dark Theme</string>
+    <string name="dark_theme_label">Dark Theme</string>
 
 </resources>
