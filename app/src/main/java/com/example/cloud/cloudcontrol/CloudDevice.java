@@ -57,7 +57,9 @@ public class CloudDevice implements Serializable{
     }
 
     private void send(String msg) throws IOException {
-        mOutputStream.write(msg.getBytes());
+        if (mOutputStream != null) {
+            mOutputStream.write(msg.getBytes());
+        }
     }
 
     /**
