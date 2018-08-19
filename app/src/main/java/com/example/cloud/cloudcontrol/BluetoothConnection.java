@@ -170,18 +170,21 @@ public class BluetoothConnection extends AppCompatActivity {
                     mConnectionService.connectDevice(cloudDevice);
                     goToCloudControllerActivity();
                 } catch (IOException ex) {
-//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia", Toast.LENGTH_LONG).show();
-                }
-                try {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mProgressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia i sprawdz czy jest włączone", Toast.LENGTH_LONG).show();
                         }
                     });
-                } catch (final Exception ex) {
-//                    Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem" + ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressDialog.dismiss();
+                    }
+                });
+
             }
         }.start();
     }

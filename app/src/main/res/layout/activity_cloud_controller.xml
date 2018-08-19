@@ -113,10 +113,7 @@
                 android:contentDescription="@string/previewEllipseDescription"
                 android:src="@drawable/preview_ellipse" />
 
-
-
         </RelativeLayout>
-
 
 
         <RelativeLayout
