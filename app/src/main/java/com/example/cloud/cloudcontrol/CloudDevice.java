@@ -74,8 +74,8 @@ public class CloudDevice implements Serializable{
      * Sends rainbow command to device
      * @throws IOException
      */
-    public void sendRainbow(int brightness) throws IOException { // z brightness i czy wszystkie takie same TODO
-        send(ProtocolMessages.getRainbowMessage(brightness)); // zmienic z brightness TODO
+    public void sendRainbow(int brightness) throws IOException {
+        send(ProtocolMessages.getRainbowMessage(brightness));
     }
 
     public void sendAllTheSameChanging(int brightness) throws IOException{

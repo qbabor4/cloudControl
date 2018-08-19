@@ -75,7 +75,6 @@ public class BluetoothConnection extends AppCompatActivity {
         if (listItems.size() == 1){
             try {
                 if (mConnectionService == null){
-                    Log.d("k12", "1");
                 }
                 mConnectionService.connectDevice(mAdapter.getItem(0));
                 goToCloudControllerActivity();
@@ -83,8 +82,6 @@ public class BluetoothConnection extends AppCompatActivity {
                 ex.printStackTrace();
                 Log.d("k12", ex.getMessage());
             }
-        } else {
-            Log.d("k12", "LOLOL" + listItems.size());
         }
     }
 

@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,9 @@ import static com.example.cloud.cloudcontrol.Settings.PREF_DARK_THEME;
  */
 public class CloudController extends AppCompatActivity {
 
+    private static int TIME_AFTER_CAN_SHOW_SENDING_FAILURE_MESSAGE_IN_MILLIS = 2000;
+    private static int mButtonsLayoutHeight;
+
     private int mHue = 0; // 0-360
     private double mSaturation = 0; // 0-1
     private double mValue = 1; // 0-1
@@ -65,6 +69,8 @@ public class CloudController extends AppCompatActivity {
 
     private boolean isDarkTheme = false;
     private boolean useDarkTheme = false;
+
+    private long timeOfLastFailure = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,17 +116,26 @@ public class CloudController extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.toolbar_options_icon){
-            goToOptionsActivity();
+            goToSettingsActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void goToOptionsActivity() {
+    private void goToSettingsActivity() {
         Intent intent = new Intent(getApplicationContext(), Settings.class);
         startActivity(intent);
     }
 
+    private void closeAndGoToBluetoothConnectionActivity(){
+        finish();
+        goToBluetoothConnectionActivity();
+    }
+
+    private void goToBluetoothConnectionActivity(){
+        Intent intent = new Intent(getApplicationContext(), BluetoothConnection.class);
+        startActivity(intent);
+    }
 
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -148,6 +163,7 @@ public class CloudController extends AppCompatActivity {
         setIvHSVCircle();
         setPickedColorPreviewEllipse();
         setIvHSVCircleBlackOverlay();
+        setButtonsLayoutHeight();
         setIvPickedColorMarker();
         setSbValueOfHSV();
     }
@@ -180,7 +196,8 @@ public class CloudController extends AppCompatActivity {
             mIsBtnOnOffPressed = !mIsBtnOnOffPressed;
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+            showFailureWhileSendingMessage();
+
         }
     }
 
@@ -235,7 +252,7 @@ public class CloudController extends AppCompatActivity {
             mIsBtnRainbowPressed = !mIsBtnRainbowPressed;
         }catch (IOException ex){
             ex.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+            showFailureWhileSendingMessage();
         }
     }
 
@@ -262,7 +279,7 @@ public class CloudController extends AppCompatActivity {
             mIsBtnAllColorsChangingPressed = !mIsBtnAllColorsChangingPressed;
         } catch (IOException ex){
             ex.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+            showFailureWhileSendingMessage();
         }
     }
 
@@ -284,17 +301,25 @@ public class CloudController extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
             if(setRgbVariables(x, y))  {
                 setOtherButtonsUnpressed(EmptyObject.emptyObject);
-                changePickedColorMarkerPosition(x, y);
+                changePickedColorMarkerPosition((int) event.getRawX(), (int) event.getRawY() - mButtonsLayoutHeight);
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); // send color
+                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); /* send color */
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+                    showFailureWhileSendingMessage();
                     e.printStackTrace();
+                    closeAndGoToBluetoothConnectionActivity();
                 }
             }
         }
         return true;
+    }
+
+    private void showFailureWhileSendingMessage(){
+        if ( (System.currentTimeMillis() - timeOfLastFailure) > TIME_AFTER_CAN_SHOW_SENDING_FAILURE_MESSAGE_IN_MILLIS) {
+            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+            timeOfLastFailure = System.currentTimeMillis();
+        }
     }
 
     private void setPickedColorPreviewEllipse(){
@@ -302,6 +327,7 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void changePickedColorMarkerPosition(int x, int y){
+        ivPickedColorMarker.setVisibility(View.VISIBLE);
         ivPickedColorMarker.setX(x -mPickedColorMarkerRadius );
         ivPickedColorMarker.setY(y -mPickedColorMarkerRadius);
     }
@@ -358,6 +384,19 @@ public class CloudController extends AppCompatActivity {
         ivHSVCircleBlackOverlay = (ImageView) findViewById(R.id.HSV_circle_black_overlay);
     }
 
+    private void setButtonsLayoutHeight(){
+        final View buttonsLayout = findViewById(R.id.buttons_layout);
+        final ViewTreeObserver vto = buttonsLayout.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mButtonsLayoutHeight = buttonsLayout.getMeasuredHeight();
+                buttonsLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
+    }
+
     private void setIvPickedColorMarker(){
         ivPickedColorMarker = (ImageView) findViewById(R.id.picked_color_marker);
         setPickedColorMarkerRadius();
@@ -398,7 +437,7 @@ public class CloudController extends AppCompatActivity {
                 try {
                     sendCommand();
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Nie udało się wysłać wiadomości (seekbar)", Toast.LENGTH_SHORT).show();
+                    showFailureWhileSendingMessage();
                 }
             }
 

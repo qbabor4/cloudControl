@@ -29,7 +29,10 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+
+
         <LinearLayout
+            android:id="@+id/buttons_layout"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -70,6 +73,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/hsv_circle_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -109,14 +113,11 @@
                 android:contentDescription="@string/previewEllipseDescription"
                 android:src="@drawable/preview_ellipse" />
 
-            <ImageView
-                android:id="@+id/picked_color_marker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/marker_02" />
+
 
         </RelativeLayout>
+
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -146,6 +147,14 @@
                 />
 
         </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/picked_color_marker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/hsv_circle_layout"
+            android:visibility="invisible"
+            android:src="@drawable/marker_02" />
 
     </LinearLayout>
 </LinearLayout>
