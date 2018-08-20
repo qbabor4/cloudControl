@@ -6,6 +6,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDevice;
+
 import java.io.IOException;
 
 /**

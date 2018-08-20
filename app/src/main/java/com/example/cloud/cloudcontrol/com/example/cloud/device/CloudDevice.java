@@ -1,8 +1,9 @@
-package com.example.cloud.cloudcontrol;
+package com.example.cloud.cloudcontrol.com.example.cloud.device;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import com.example.cloud.cloudcontrol.EDefaultData;
 import com.example.cloud.protocol.ProtocolMessages;
 
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class CloudDevice implements Serializable{
         setConnected(false);
     }
 
-    private void send(String msg) throws IOException {
+    protected void send(String msg) throws IOException {
         if (mOutputStream != null) {
             mOutputStream.write(msg.getBytes());
         }

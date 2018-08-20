@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
+
+import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDevice;
 
 import java.io.IOException;
 
@@ -70,7 +71,7 @@ public class CloudController extends AppCompatActivity {
     private boolean isDarkTheme = false;
     private boolean useDarkTheme = false;
 
-    private long timeOfLastFailure = 0L;
+    private long timeOfLastFailureTOSendMessage = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,7 +302,7 @@ public class CloudController extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
             if(setRgbVariables(x, y))  {
                 setOtherButtonsUnpressed(EmptyObject.emptyObject);
-                changePickedColorMarkerPosition((int) event.getRawX(), (int) event.getRawY() - mButtonsLayoutHeight);
+                changePickedColorMarkerPosition((int) event.getRawX(), (int) event.getRawY() );
                 changePreviewEllipseColor();
                 try {
                     mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); /* send color */
@@ -316,9 +317,9 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void showFailureWhileSendingMessage(){
-        if ( (System.currentTimeMillis() - timeOfLastFailure) > TIME_AFTER_CAN_SHOW_SENDING_FAILURE_MESSAGE_IN_MILLIS) {
+        if ( (System.currentTimeMillis() - timeOfLastFailureTOSendMessage) > TIME_AFTER_CAN_SHOW_SENDING_FAILURE_MESSAGE_IN_MILLIS) {
             Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
-            timeOfLastFailure = System.currentTimeMillis();
+            timeOfLastFailureTOSendMessage = System.currentTimeMillis();
         }
     }
 
@@ -327,9 +328,9 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void changePickedColorMarkerPosition(int x, int y){
-        ivPickedColorMarker.setVisibility(View.VISIBLE);
+        ivPickedColorMarker.setVisibility(View.VISIBLE); // TODO change this to setting start position at first
         ivPickedColorMarker.setX(x -mPickedColorMarkerRadius );
-        ivPickedColorMarker.setY(y -mPickedColorMarkerRadius);
+        ivPickedColorMarker.setY(y -mPickedColorMarkerRadius - mButtonsLayoutHeight);
     }
 
     private void changePreviewEllipseColor() {
@@ -449,12 +450,14 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void sendCommand() throws IOException {
-        if (mIsBtnRainbowPressed){
-            mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
-        } else if (mIsBtnAllColorsChangingPressed){
-            mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
-        } else {
-            mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+        if (mCloudDevice != null) {
+            if (mIsBtnRainbowPressed) {
+                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+            } else if (mIsBtnAllColorsChangingPressed) {
+                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+            } else {
+                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+            }
         }
     }
 

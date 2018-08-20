@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDevice;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
@@ -210,7 +212,7 @@ public class BluetoothConnection extends AppCompatActivity {
                     }
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Nie znaleziono sparowanych urządzeń", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Nie znaleziono sparowanych urządzeń. Dodaj je w opcjach bloototh swojego smartfona", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -222,6 +224,9 @@ public class BluetoothConnection extends AppCompatActivity {
             /* Make sure the request was successful */
             if (resultCode != RESULT_CANCELED) {
                 addPairedDevicesToList();
+                if (mConnectionService != null){
+                    connectIfOnlyOneDeviceFound();
+                }
             }
         }
     }
