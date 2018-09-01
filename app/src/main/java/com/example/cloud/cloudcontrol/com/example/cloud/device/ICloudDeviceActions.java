@@ -2,10 +2,20 @@ package com.example.cloud.cloudcontrol.com.example.cloud.device;
 
 import java.io.IOException;
 
-public interface ICloudDeviceDao {
+public interface ICloudDeviceActions {
 
-    void connect() throws IOException;
+    void setDevice(CloudDevice device);
 
+    /**
+     * Connects device
+     * @throws IOException
+     */
+    void connect() throws IOException, NoDeviceException;
+
+    /**
+     * Disconnects device
+     * @throws IOException
+     */
     void disconnect() throws IOException;
 
     /**
@@ -20,6 +30,11 @@ public interface ICloudDeviceDao {
      */
     void sendRainbow(int brightness) throws IOException;
 
+    /**
+     * Sends rainbow command to device with all leds in the same color
+     * @throws IOException
+     */
     void sendAllTheSameChanging(int brightness) throws IOException;
+
 
 }

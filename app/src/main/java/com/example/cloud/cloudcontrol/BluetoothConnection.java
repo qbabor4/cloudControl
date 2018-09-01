@@ -74,10 +74,8 @@ public class BluetoothConnection extends AppCompatActivity {
     }
 
     private void connectIfOnlyOneDeviceFound(){
-        if (listItems.size() == 1){
+        if (isOnlyOneDevice()){
             try {
-                if (mConnectionService == null){
-                }
                 mConnectionService.connectDevice(mAdapter.getItem(0));
                 goToCloudControllerActivity();
             } catch (IOException ex){
@@ -85,6 +83,16 @@ public class BluetoothConnection extends AppCompatActivity {
                 Log.d("k12", ex.getMessage());
             }
         }
+    }
+
+    private void connectIfOnlyOneDeviceFoundWithProgressDialog(){
+        if (isOnlyOneDevice()){
+            connectWithProgressDialog(mAdapter.getItem(0));
+        }
+    }
+
+    private boolean isOnlyOneDevice(){
+        return listItems.size() == 1;
     }
 
     private BluetoothAdapter getBluetoothAdapter() {
@@ -225,7 +233,7 @@ public class BluetoothConnection extends AppCompatActivity {
             if (resultCode != RESULT_CANCELED) {
                 addPairedDevicesToList();
                 if (mConnectionService != null){
-                    connectIfOnlyOneDeviceFound();
+                    connectIfOnlyOneDeviceFoundWithProgressDialog();
                 }
             }
         }

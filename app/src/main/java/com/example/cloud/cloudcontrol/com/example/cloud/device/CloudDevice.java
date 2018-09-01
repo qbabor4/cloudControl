@@ -20,11 +20,32 @@ public class CloudDevice implements Serializable{
     private final String mName;
     private final String mAddress;
 
-    private boolean isConnected = false;
-
     private final BluetoothDevice mDevice;
     private BluetoothSocket mSocket;
     private OutputStream mOutputStream;
+
+    private boolean isConnected = false;
+
+    protected BluetoothDevice getDevice() {
+        return mDevice;
+    }
+
+    protected BluetoothSocket getSocket() {
+        return mSocket;
+    }
+
+    protected void setSocket(BluetoothSocket mSocket) {
+        this.mSocket = mSocket;
+    }
+
+    protected OutputStream getOutputStream() {
+        return mOutputStream;
+    }
+
+    protected void setOutputStream(OutputStream mOutputStream) {
+        this.mOutputStream = mOutputStream;
+    }
+
 
     public CloudDevice(BluetoothDevice device) {
         this.mDevice = device;
@@ -38,50 +59,50 @@ public class CloudDevice implements Serializable{
      *
      * @throws IOException when connection error occurs
      */
-    public void connect() throws IOException {
-        mSocket = mDevice.createRfcommSocketToServiceRecord(UUID.fromString(EDefaultData.BLUETOOTH_MODULE_UUID.getData()));
-        mSocket.connect();
-
-        mOutputStream = mSocket.getOutputStream();
-        setConnected(true);
-    }
+//    public void connect() throws IOException {
+//        mSocket = mDevice.createRfcommSocketToServiceRecord(UUID.fromString(EDefaultData.BLUETOOTH_MODULE_UUID.getData()));
+//        mSocket.connect();
+//
+//        mOutputStream = mSocket.getOutputStream();
+//        setConnected(true);
+//    }
 
     /**
      * Disconnects from device.
      * Closes outputstream and socket.
      * @throws IOException when error occurs while disconnecting
      */
-    public void disconnect() throws IOException {
-        mOutputStream.close();
-        mSocket.close();
-        setConnected(false);
-    }
+//    public void disconnect() throws IOException {
+//        mOutputStream.close();
+//        mSocket.close();
+//        setConnected(false);
+//    }
 
-    protected void send(String msg) throws IOException {
-        if (mOutputStream != null) {
-            mOutputStream.write(msg.getBytes());
-        }
-    }
+//    protected void send(String msg) throws IOException {
+//        if (mOutputStream != null) {
+//            mOutputStream.write(msg.getBytes());
+//        }
+//    }
 
-    /**
-     * Sends color command to device
-     * @throws IOException
-     */
-    public void sendColor(String color) throws IOException {
-        send(ProtocolMessages.getColorMessage(color));
-    }
+//    /**
+//     * Sends color command to device
+//     * @throws IOException
+//     */
+//    public void sendColor(String color) throws IOException {
+//        send(ProtocolMessages.getColorMessage(color));
+//    }
 
-    /**
-     * Sends rainbow command to device
-     * @throws IOException
-     */
-    public void sendRainbow(int brightness) throws IOException {
-        send(ProtocolMessages.getRainbowMessage(brightness));
-    }
+//    /**
+//     * Sends rainbow command to device
+//     * @throws IOException
+//     */
+//    public void sendRainbow(int brightness) throws IOException {
+//        send(ProtocolMessages.getRainbowMessage(brightness));
+//    }
 
-    public void sendAllTheSameChanging(int brightness) throws IOException{
-        send(ProtocolMessages.getAllTheSameChangingMessage(brightness));
-    }
+//    public void sendAllTheSameChanging(int brightness) throws IOException{
+//        send(ProtocolMessages.getAllTheSameChangingMessage(brightness));
+//    }
 
 
     /* Getters and setters */
@@ -90,7 +111,7 @@ public class CloudDevice implements Serializable{
         return isConnected;
     }
 
-    private void setConnected(boolean connected) {
+    protected void setConnected(boolean connected) {
         isConnected = connected;
     }
 

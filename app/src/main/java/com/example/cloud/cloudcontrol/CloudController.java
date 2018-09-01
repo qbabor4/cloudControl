@@ -21,7 +21,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDevice;
+import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDeviceActionsImpl;
+import com.example.cloud.cloudcontrol.com.example.cloud.device.ICloudDeviceActions;
 
 import java.io.IOException;
 
@@ -31,16 +32,8 @@ import static com.example.cloud.cloudcontrol.Settings.PREF_DARK_THEME;
 /**
  * TODO
  * okragłe logo (manifest)
- * animacja łączenia jak łączy z chmurą (bo sie zawiesza) nie odpowiada aplikacja czasami
- * zobaczyc czy ktos juz sie nie połączył z chmurą z menu górnego androida
- * mozna napisac, ze automatycznie łączy sie ze sparowaną chmurą w instrukcji
- *
- * jak sie bedzie dało wysłać, to można próbować znowu łączyć z tą chmurą
- * języki, ciemny mode, przejscie do łączenia (jak bedzie chcial inna chmure połączyć) w ustawieniach
+ * języki
  * jak sie klika na splashscrren to moze wysyalić null przy sendColor, bo jeszcze nie pobrał obiektu chmury
- *
- * TODO IFTIME:
- * zrobic z tego bibliotekę i ją importować.
  */
 public class CloudController extends AppCompatActivity {
 
@@ -62,7 +55,8 @@ public class CloudController extends AppCompatActivity {
     private boolean mIsBtnRainbowPressed = false;
     private boolean mIsBtnAllColorsChangingPressed = false;
 
-    private CloudDevice mCloudDevice = null;
+//    private CloudDevice mCloudDevice = null;
+    private ICloudDeviceActions mCloudDeviceActions;
 
     private ImageButton btnOnOff, btnRainbow, btnAllColorsChanging;
     private ImageView ivHSVCircle, ivPickedColorPreviewEllipse, ivHSVCircleBlackOverlay, ivPickedColorMarker;
@@ -79,14 +73,13 @@ public class CloudController extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
-
         if(useDarkTheme && !isDarkTheme) {
             setTheme(R.style.AppTheme_Dark_NoActionBar);
             isDarkTheme = true;
         }
-
         setContentView(R.layout.activity_cloud_controller);
 
+        mCloudDeviceActions = new CloudDeviceActionsImpl();
         initCloudDeviceService();
         initComponents();
     }
@@ -143,7 +136,8 @@ public class CloudController extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             /* We've bound to LocalService, cast the IBinder and get LocalService instance */
-            mCloudDevice = ((ConnectionService.LocalBinder) service).getService().getConnectedCloudDevice();
+            mCloudDeviceActions.setDevice(((ConnectionService.LocalBinder) service).getService().getConnectedCloudDevice());
+//            mCloudDevice = ((ConnectionService.LocalBinder) service).getService().getConnectedCloudDevice();
         }
 
         @Override
@@ -187,10 +181,12 @@ public class CloudController extends AppCompatActivity {
     public void onBtnOnOffClick(View view) {
         try {
             if (mIsBtnOnOffPressed) {
-                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mCloudDeviceActions.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+//                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnOnOff.setImageResource(R.drawable.button_01);
             } else {
-                mCloudDevice.sendColor(Colors.BLACK.getColor());
+                mCloudDeviceActions.sendColor(Colors.BLACK.getColor());
+//                mCloudDevice.sendColor(Colors.BLACK.getColor());
                 btnOnOff.setImageResource(R.drawable.button_01_pressed);
                 setOtherButtonsUnpressed(btnOnOff);
             }
@@ -242,12 +238,14 @@ public class CloudController extends AppCompatActivity {
     private void onBtnRainbowClick(View v){
         try{
             if (!mIsBtnRainbowPressed) {
-                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+                mCloudDeviceActions.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+//                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
                 btnRainbow.setImageResource(R.drawable.button_03_pressed);
                 setOtherButtonsUnpressed(btnRainbow);
             } else {
                 /* Show previous color */
-                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mCloudDeviceActions.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+//                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnRainbow.setImageResource(R.drawable.button_03);
             }
             mIsBtnRainbowPressed = !mIsBtnRainbowPressed;
@@ -270,11 +268,13 @@ public class CloudController extends AppCompatActivity {
     private void OnBtnAllColorsChangingClick(View v){
         try{
             if(!mIsBtnAllColorsChangingPressed){
-                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+                mCloudDeviceActions.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+//                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
                 btnAllColorsChanging.setImageResource(R.drawable.button_02_pressed);
                 setOtherButtonsUnpressed(btnAllColorsChanging);
             } else {
-                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mCloudDeviceActions.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+//                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 btnAllColorsChanging.setImageResource(R.drawable.button_02);
             }
             mIsBtnAllColorsChangingPressed = !mIsBtnAllColorsChangingPressed;
@@ -305,7 +305,8 @@ public class CloudController extends AppCompatActivity {
                 changePickedColorMarkerPosition((int) event.getRawX(), (int) event.getRawY() );
                 changePreviewEllipseColor();
                 try {
-                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue)); /* send color */
+                    mCloudDeviceActions.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+//                    mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
                 } catch (IOException e) {
                     showFailureWhileSendingMessage();
                     e.printStackTrace();
@@ -450,15 +451,18 @@ public class CloudController extends AppCompatActivity {
     }
 
     private void sendCommand() throws IOException {
-        if (mCloudDevice != null) {
+//        if (mCloudDevice != null) {
             if (mIsBtnRainbowPressed) {
-                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+                mCloudDeviceActions.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
+//                mCloudDevice.sendRainbow(HsvRgbCalculations.getBrightness(mValue));
             } else if (mIsBtnAllColorsChangingPressed) {
-                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+                mCloudDeviceActions.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
+//                mCloudDevice.sendAllTheSameChanging(HsvRgbCalculations.getBrightness(mValue));
             } else {
-                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+                mCloudDeviceActions.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
+//                mCloudDevice.sendColor(HsvRgbCalculations.changeRGBColorTOHex(mRed, mGreen, mBlue));
             }
-        }
+//        }
     }
 
     private void setValue(int progress){

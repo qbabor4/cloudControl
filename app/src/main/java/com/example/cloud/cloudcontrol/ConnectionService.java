@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDevice;
+import com.example.cloud.cloudcontrol.com.example.cloud.device.CloudDeviceActionsImpl;
+import com.example.cloud.cloudcontrol.com.example.cloud.device.ICloudDeviceActions;
 
 import java.io.IOException;
 
@@ -19,6 +21,8 @@ import java.io.IOException;
 public class ConnectionService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
+
+    private ICloudDeviceActions cloudDeviceActions = new CloudDeviceActionsImpl();
 
     /**
      * Device that is connected to app
@@ -38,8 +42,12 @@ public class ConnectionService extends Service {
      * @throws IOException when connection error occurs
      */
     public void connectDevice(CloudDevice cloudDevice) throws IOException {
-        cloudDevice.connect();
+        cloudDeviceActions.setDevice(cloudDevice);
+        cloudDeviceActions.connect();
+
+//        cloudDevice.connect();
         setConnectedCloudDevice(cloudDevice);
+//        setConnectedCloudDevice(cloudDeviceActions.getDevice());
     }
 
     /**
