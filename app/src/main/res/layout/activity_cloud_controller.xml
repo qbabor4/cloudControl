@@ -47,7 +47,7 @@
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/button_01" />
+                app:srcCompat="@drawable/button_on_off" />
 
             <ImageButton
                 android:id="@+id/btn_all_colors_changing"
@@ -57,7 +57,7 @@
                 android:adjustViewBounds="true"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/button_02" />
+                app:srcCompat="@drawable/button_all_colors_changing" />
 
             <ImageButton
                 android:id="@+id/btn_rainbow"
@@ -67,7 +67,7 @@
                 android:adjustViewBounds="true"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/button_03" />
+                app:srcCompat="@drawable/button_rainbow" />
 
 
         </LinearLayout>
@@ -86,7 +86,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/hsvCircleDescription"
-                android:src="@drawable/hsv_circle_fit_05"
+                android:src="@drawable/hsv_circle"
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:scaleType="fitXY"/>
@@ -122,14 +122,14 @@
             android:orientation="horizontal"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="25dp"
             >
 
             <ImageView
                 android:id="@+id/brightness"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/brightness_03" />
+                android:src="@drawable/brightness" />
 
             <SeekBar
                 android:id="@+id/value_of_HSV"
@@ -151,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/hsv_circle_layout"
             android:visibility="invisible"
-            android:src="@drawable/marker_02" />
+            android:src="@drawable/marker" />
 
     </LinearLayout>
 </LinearLayout>

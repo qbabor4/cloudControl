@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="pl.example.cloud.cloudcontrol.CloudController"
+            android:name="pl.qbabor.cloud.activities.controller.CloudController"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name="pl.example.cloud.activities.connection.BluetoothConnection"
+            android:name="pl.qbabor.cloud.activities.connection.BluetoothConnection"
             android:screenOrientation="portrait"
             android:theme="@style/splashScreenTheme">
             <intent-filter>
@@ -26,10 +26,10 @@
         </activity>
 
         <service
-            android:name="pl.example.cloud.activities.connection.ConnectionService"
+            android:name="pl.qbabor.cloud.activities.connection.ConnectionService"
             android:exported="false" />
 
-        <activity android:name="pl.example.cloud.cloudcontrol.Settings"></activity>
+        <activity android:name="pl.qbabor.cloud.activities.settings.Settings"></activity>
     </application>
 
 </manifest>

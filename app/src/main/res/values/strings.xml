@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Cloud</string>
+    <string name="app_name">Cotton Cloud</string>
     <string name="Brightness">Brightness</string>
     <string name="hsvCircleDescription">Color circle</string>
     <string name="hsvCircleBlackOverlayDescription">Black overlay ellipse on hsv circle</string>

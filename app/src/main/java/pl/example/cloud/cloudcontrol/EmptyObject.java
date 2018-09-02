@@ -1,6 +1,0 @@
-package pl.example.cloud.cloudcontrol;
-
-public class EmptyObject {
-
-    public static Object emptyObject = new Object();
-}

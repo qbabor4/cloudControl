@@ -4,10 +4,4 @@
     <item
         android:drawable="@drawable/welcome_screen_1"
         />
-    <!-- Your product logo - 144dp color version of your app icon -->
-    <!--<item>-->
-        <!--<bitmap-->
-            <!--android:src="@drawable/splash_screen_1"-->
-            <!--android:gravity="center" />-->
-    <!--</item>-->
 </layer-list>
