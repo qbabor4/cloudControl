@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -76,6 +77,8 @@ public class CloudController extends AppCompatActivity {
 
     private long timeOfLastFailureTOSendMessage = 0L;
 
+    private Resources mStringResources;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +90,7 @@ public class CloudController extends AppCompatActivity {
             isDarkTheme = true;
         }
         setContentView(R.layout.activity_cloud_controller);
+        mStringResources = getResources();
 
         mCloudDeviceActions = new CloudDeviceActionsImpl();
         initCloudDeviceService();
@@ -321,7 +325,7 @@ public class CloudController extends AppCompatActivity {
 
     private void showFailureWhileSendingMessage(){
         if ( (System.currentTimeMillis() - timeOfLastFailureTOSendMessage) > TIME_AFTER_CAN_SHOW_SENDING_FAILURE_MESSAGE_IN_MILLIS) {
-            Toast.makeText(getApplicationContext(), "Nie udało się wysłać danych", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), mStringResources.getString(R.string.sending_data_error), Toast.LENGTH_SHORT).show();
             timeOfLastFailureTOSendMessage = System.currentTimeMillis();
         }
     }
@@ -364,7 +368,6 @@ public class CloudController extends AppCompatActivity {
      */
     private boolean setRgbVariables(int x, int y) {
         double saturation = HsvRgbCalculations.getSaturation(HsvRgbCalculations.getDistanceFromCenter(x, y, mHSVCircleRadius), mHSVCircleRadius);
-        Log.d("k3", saturation + "");
         if (saturation <= 1) {
             mSaturation = saturation;
             mHue = HsvRgbCalculations.getHue(x, y, mHSVCircleRadius);

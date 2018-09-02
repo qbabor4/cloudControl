@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import pl.qbabor.cloud.device.CloudDevice;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import static pl.qbabor.cloud.activities.settings.Settings.PREFS_NAME;
@@ -55,6 +57,8 @@ public class BluetoothConnection extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
 
+    private Resources mStringResources;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme); /* Splash screen */
@@ -68,6 +72,7 @@ public class BluetoothConnection extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
+        mStringResources = getResources();
 
         setBluetoothAdapter(getBluetoothAdapter());
         setComponents();
@@ -83,7 +88,6 @@ public class BluetoothConnection extends AppCompatActivity {
                 goToCloudControllerActivity();
             } catch (IOException ex){
                 ex.printStackTrace();
-                Log.d("k12", ex.getMessage());
             }
         }
     }
@@ -102,7 +106,7 @@ public class BluetoothConnection extends AppCompatActivity {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             /* When there is no bluetooth module */
-            Toast.makeText(getApplicationContext(), "Moduł bluetooth nie został wykryty", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), mStringResources.getString(R.string.no_bluetooth_adapter_found), Toast.LENGTH_LONG).show();
             finish();
         }
         return bluetoothAdapter;
@@ -175,7 +179,7 @@ public class BluetoothConnection extends AppCompatActivity {
     }
 
     private void connectWithProgressDialog(final CloudDevice cloudDevice){
-        mProgressDialog = ProgressDialog.show(this, "Proszę czekać", "Łączę z chmurą...", true);
+        mProgressDialog = ProgressDialog.show(this, mStringResources.getString(R.string.please_wait_connecting), mStringResources.getString(R.string.connecting_with_cloud), true);
         new Thread() {
             @Override
             public void run() {
@@ -186,7 +190,7 @@ public class BluetoothConnection extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia i sprawdz czy jest włączone", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), mStringResources.getString(R.string.device_connection_error), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -223,7 +227,7 @@ public class BluetoothConnection extends AppCompatActivity {
                     }
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "Nie znaleziono sparowanych urządzeń. Dodaj je w opcjach bloototh swojego smartfona", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), mStringResources.getString(R.string.no_paired_devices_found), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -242,13 +246,9 @@ public class BluetoothConnection extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("lol12", "KONIECCCC!!!");
-//        unbindService(mConnection); // to chyba nie ... TODO
     }
-
 
 }

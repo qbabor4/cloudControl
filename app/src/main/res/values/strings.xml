@@ -6,8 +6,15 @@
     <string name="previewEllipseDescription">Picked color from hsv circle</string>
 
     <string name="title_activity_fullscreen_startup_screen">FullscreenActivityStartupScreen</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="dark_theme_label">Dark Theme</string>
+
+    <string name="no_bluetooth_adapter_found">Moduł bluetooth nie został wykryty</string>
+
+    <string name="please_wait_connecting">Proszę czekać</string>
+    <string name="connecting_with_cloud">Łączę z chmurą&#8230;</string>
+    <string name="device_connection_error">Nie udało się połączyć z urządzeniem. Spróbuj podejśc bliżej urządzenia i sprawdz czy jest włączone</string>
+    <string name="no_paired_devices_found">Nie znaleziono sparowanych urządzeń. Dodaj je w opcjach bloototh swojego smartfona</string>
+
+    <string name="sending_data_error">Nie udało się wysłać danych</string>
 
 </resources>

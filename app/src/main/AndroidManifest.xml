@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- android:roundIcon="@mipmap/ic_launcher_round" --><!-- android:theme="@style/splashScreenTheme" -->
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cloud.cloudcontrol">
 
@@ -7,13 +7,16 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/icon1"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- activities -->
         <activity
             android:name="pl.qbabor.cloud.activities.controller.CloudController"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name="pl.qbabor.cloud.activities.connection.BluetoothConnection"
             android:screenOrientation="portrait"
@@ -25,11 +28,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="pl.qbabor.cloud.activities.settings.Settings"/>
+
+        <!-- services -->
         <service
             android:name="pl.qbabor.cloud.activities.connection.ConnectionService"
             android:exported="false" />
 
-        <activity android:name="pl.qbabor.cloud.activities.settings.Settings"></activity>
     </application>
 
 </manifest>
